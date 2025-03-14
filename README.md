@@ -1,57 +1,55 @@
-# Project Name
+# 🏝️ The AI Travel Agents
 
-(short, 1-3 sentenced, description of the project)
+The AI Travel Agents is a robust **enterprise application** that leverages multiple **AI agents** to enhance travel agency operations. The application demonstrates how **five AI agents** collaborate to assist employees in handling customer queries, providing destination recommendations, and planning itineraries.
 
-## Features
+## 🚀 Overview of AI Agents
 
-This project framework provides the following features:
+| Agent Name                             | Purpose                                                                                                |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Customer Query Understanding Agent** | Extracts key preferences from customer inquiries.                                                      |
+| **Destination Recommendation Agent**   | Suggests destinations based on customer preferences.                                                   |
+| **Itinerary Planning Agent**           | Creates a detailed itinerary and travel plan.                                                          |
+| **Code Evaluation Agent**              | Executes custom logic and scripts if needed.                                                           |
+| **Model Inference Agent**              | Runs an **LLM** using **Ollama** on **Azure Container Apps' serverless GPU** for AI-powered responses. |
+| **Echo MCP Agent**                         | Echoes back any received input (used as an example).                                             |
 
-* Feature 1
-* Feature 2
-* ...
+---
 
-## Getting Started
+## 🏗️ Project Structure
+```
+ai-travel-agents/
+│── agents/
+│   ├── customer-query-agent/
+│   ├── destination-recommendation-agent/
+│   ├── itinerary-planning-agent/
+│   ├── code-evaluation-agent/
+│   ├── model-inference-agent/
+│   └── echo-mcp-agent/
+│
+│── api/                    # API Gateway for backend services
+│── ui/                     # Frontend application
+│── infra/                  # azd-related files
+│── docs/                   # Documentation files
+│
+│── README.md               # Project documentation
 
-### Prerequisites
+```
+---
 
-(ideally very short, if any)
+## 🛠️ Prerequisites
 
-- OS
-- Library version
-- ...
+Ensure you have the following installed before running the application:
 
-### Installation
+- 🐳 **[Docker](https://www.docker.com/)**
+- 📦 **[Docker Compose](https://docs.docker.com/compose/)**
 
-(ideally very short)
+---
 
-- npm install [package name]
-- mvn install
-- ...
+## 6️⃣ Run the Entire Application Using Docker Compose
 
-### Quickstart
-(Add steps to get up and running quickly)
+To run the entire application using Docker Compose:
+```sh
+docker compose up --build
+```
+This command will build and start all the services defined in the `docker-compose.yml` file.
 
-1. git clone [repository clone url]
-2. cd [repository name]
-3. ...
-
-
-## Demo
-
-A demo app is included to show how to use the project.
-
-To run the demo, follow these steps:
-
-(Add steps to start up the demo)
-
-1.
-2.
-3.
-
-## Resources
-
-(Any additional resources or related projects)
-
-- Link to supporting information
-- Link to similar sample
-- ...

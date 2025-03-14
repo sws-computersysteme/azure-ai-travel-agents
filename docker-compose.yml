@@ -1,0 +1,71 @@
+services:
+  customer-query-agent:
+    build: ./agents/customer-query-agent
+    ports:
+      - "5001:5000"
+    environment:
+      - AGENT_NAME=customer-query-agent
+    networks:
+      - ai-network
+
+  destination-recommendation-agent:
+    build: ./agents/destination-recommendation-agent
+    ports:
+      - "5002:5000"
+    networks:
+      - ai-network
+
+  itinerary-planning-agent:
+    build: ./agents/itinerary-planning-agent
+    ports:
+      - "5003:5000"
+    networks:
+      - ai-network
+
+  code-evaluation-agent:
+    build: ./agents/code-evaluation-agent
+    ports:
+      - "5004:5000"
+    networks:
+      - ai-network
+
+  model-inference-agent:
+    build: ./agents/model-inference-agent
+    ports:
+      - "5005:5000"
+    networks:
+      - ai-network
+
+  echo-mcp-agent:
+    build: ./agents/echo-mcp-agent
+    ports:
+      - "5006:5000"
+    networks:
+      - ai-network
+
+  api:
+    build: ./api
+    ports:
+      - "4000:4000"
+    depends_on:
+      - customer-query-agent
+      - destination-recommendation-agent
+      - itinerary-planning-agent
+      - code-evaluation-agent
+      - model-inference-agent
+      - echo-mcp-agent
+    networks:
+      - ai-network
+
+  ui:
+    build: ./ui
+    ports:
+      - "8000:8000"
+    depends_on:
+      - api
+    networks:
+      - ai-network
+
+networks:
+  ai-network:
+    driver: bridge

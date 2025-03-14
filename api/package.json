@@ -1,0 +1,21 @@
+{
+    "name": "mcp-client-example",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "dist/index.js",
+    "scripts": {
+      "start": "node dist/index.js",
+      "build": "tsc"
+    },
+    "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "dotenv": "^16.4.7",
+    "openai": "^4.86.2",
+    "type": "^2.7.3",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  }
+}
