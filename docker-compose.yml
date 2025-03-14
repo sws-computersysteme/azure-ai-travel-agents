@@ -36,8 +36,8 @@ services:
     networks:
       - ai-network
 
-  echo-mcp-agent:
-    build: ./agents/echo-mcp-agent
+  echo-agent:
+    build: ./agents/echo-agent
     ports:
       - "5006:5000"
     networks:
@@ -53,7 +53,7 @@ services:
       - itinerary-planning-agent
       - code-evaluation-agent
       - model-inference-agent
-      - echo-mcp-agent
+      - echo-agent
     networks:
       - ai-network
 

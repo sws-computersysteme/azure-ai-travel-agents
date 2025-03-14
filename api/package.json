@@ -1,13 +1,16 @@
 {
-    "name": "mcp-client-example",
-    "version": "1.0.0",
-    "type": "module",
-    "main": "dist/index.js",
-    "scripts": {
-      "start": "node dist/index.js",
-      "build": "tsc"
-    },
-    "dependencies": {
+  "name": "api",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.1",
     "dotenv": "^16.4.7",
     "openai": "^4.86.2",

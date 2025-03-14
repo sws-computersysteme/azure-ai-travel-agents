@@ -1,6 +1,6 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
-import { Transport } from "@modelcontextprotocol/sdk/shared/transport";
+import { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 
 class MCPClient {
   private mcp: Client;
@@ -45,7 +45,7 @@ class MCPClient {
 
 (async () => {
   const client = new MCPClient();
-  await client.connectToServer("http://localhost:5006/sse");
+  await client.connectToServer("http://localhost:5000/sse");
   console.log("Connected to MCP server");
 
   const query = "Hello world from the client!";
