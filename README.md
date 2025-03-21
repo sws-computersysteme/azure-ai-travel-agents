@@ -15,7 +15,7 @@ The AI Travel Agents is a robust **enterprise application** that leverages multi
 
 ## High-Level Architecture
 
-![High-Level Architecture](docs/ai-travel-agents-architecture-diagram.png)
+![High-Level Architecture](docs/ai-travel-agents-architecture-diagram.svg)
 
 ## Project Structure
 
