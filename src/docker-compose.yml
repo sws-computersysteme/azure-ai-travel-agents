@@ -1,3 +1,4 @@
+name: ai-travel-agents
 services:
   customer-query-agent:
     container_name: customer-query-agent

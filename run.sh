@@ -8,4 +8,4 @@ echo "Starting the AI Travel Agents application..."
 cd src
 
 # Start the application
-docker-compose up --build
+docker compose up --build
