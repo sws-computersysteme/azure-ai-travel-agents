@@ -2,4 +2,4 @@
 FROM alpine:latest
 
 # Default command to print "Hello World"
-CMD ["echo", "Hello from code-evaluation-agent!"]
+CMD ["echo", "Hello from model-inference!"]

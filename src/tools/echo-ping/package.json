@@ -1,10 +1,10 @@
 {
-  "name": "echo-agent",
+  "name": "tool-echo-ping",
   "type": "module",
   "license": "MIT",
   "author": "Microsoft Corporation",
   "version": "1.0.0",
-  "description": "A simple echo agent for the Model Context Protocol (MCP).",
+  "description": "A simple echo tool for the Model Context Protocol (MCP).",
   "keywords": [
     "model",
     "context",
@@ -15,7 +15,7 @@
   ],
   "main": "dist/index.js",
   "bin": {
-    "echo-agent": "dist/index.js"
+    "tool-echo-ping": "dist/index.js"
   },
   "scripts": {
     "start": "node dist/index.js",

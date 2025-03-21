@@ -1,85 +1,91 @@
 name: ai-travel-agents
 services:
-  customer-query-agent:
-    container_name: customer-query-agent
-    build: ./agents/customer-query-agent
+  tool-customer-query:
+    container_name: tool-customer-query
+    build: ./tools/customer-query
     ports:
       - "5001:5000"
-    environment:
-      - AGENT_NAME=customer-query-agent
     networks:
       - ai-network
 
-  destination-recommendation-agent:
-    container_name: destination-recommendation-agent
-    build: ./agents/destination-recommendation-agent
+  tool-destination-recommendation:
+    container_name: tool-destination-recommendation
+    build: ./tools/destination-recommendation
     ports:
       - "5002:5000"
     networks:
       - ai-network
 
-  itinerary-planning-agent:
-    container_name: itinerary-planning-agent
-    build: ./agents/itinerary-planning-agent
+  tool-itinerary-planning:
+    container_name: tool-itinerary-planning
+    build: ./tools/itinerary-planning
     ports:
       - "5003:5000"
     networks:
       - ai-network
 
-  code-evaluation-agent:
-    container_name: code-evaluation-agent
-    build: ./agents/code-evaluation-agent
+  tool-code-evaluation:
+    container_name: tool-code-evaluation
+    build: ./tools/code-evaluation
     ports:
       - "5004:5000"
     networks:
       - ai-network
 
-  model-inference-agent:
-    container_name: model-inference-agent
-    build: ./agents/model-inference-agent
+  tool-model-inference:
+    container_name: tool-model-inference
+    build: ./tools/model-inference
     ports:
       - "5005:5000"
     networks:
       - ai-network
-
-  echo-agent:
-    container_name: echo-agent
-    build: ./agents/echo-agent
+  
+  tool-web-search:
+    container_name: tool-web-search
+    build: ./tools/web-search
     ports:
       - "5006:5000"
     networks:
       - ai-network
+  tool-echo-ping:
+    container_name: tool-echo-ping
+    build: ./tools/echo-ping
+    ports:
+      - "5007:5000"
+    networks:
+      - ai-network
     environment:
-      - OTEL_SERVICE_NAME=echo-agent
+      - OTLP_SERVICE_NAME=tool-echo-ping
       - OTLP_ENDPOINT=http://aspire-dashboard:18889
       - OTLP_HEADERS=x-otlp-header=header-value
 
-  api:
-    container_name: api
+  web-api:
+    container_name: web-api
     build: ./api
     ports:
       - "4000:4000"
     depends_on:
-      - customer-query-agent
-      - destination-recommendation-agent
-      - itinerary-planning-agent
-      - code-evaluation-agent
-      - model-inference-agent
-      - echo-agent
+      - tool-customer-query
+      - tool-destination-recommendation
+      - tool-itinerary-planning
+      - tool-code-evaluation
+      - tool-model-inference
+      - tool-web-search
+      - tool-echo-ping
     networks:
       - ai-network
     environment:
-      - OTEL_SERVICE_NAME=api
+      - OTLP_SERVICE_NAME=api
       - OTLP_ENDPOINT=http://aspire-dashboard:18889
       - OTLP_HEADERS=x-otlp-header=header-value
 
-  ui:
-    container_name: ui
+  web-ui:
+    container_name: web-ui
     build: ./ui
     ports:
       - "8000:8000"
     depends_on:
-      - api
+      - web-api
     networks:
       - ai-network
 

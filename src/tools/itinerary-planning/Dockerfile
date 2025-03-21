@@ -2,4 +2,4 @@
 FROM alpine:latest
 
 # Default command to print "Hello World"
-CMD ["echo", "Hello from destination-recommendation-agent!"]
+CMD ["echo", "Hello from itinerary-planning!"]

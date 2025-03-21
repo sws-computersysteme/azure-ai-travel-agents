@@ -9,7 +9,7 @@ class MCPClient {
   private transport: Transport | null = null;
 
   constructor() {
-    this.mcp = new Client({ name: "mcp-client", version: "1.0.0" });
+    this.mcp = new Client({ name: "mcp-client-echo-ping", version: "1.0.0" });
   }
 
   async connectToServer(serverUrl: string) {
@@ -50,7 +50,7 @@ class MCPClient {
 
 (async () => {
   const client = new MCPClient();
-  await client.connectToServer("http://echo-agent:5000/sse");
+  await client.connectToServer("http://tool-echo-ping:5000/sse");
   log("Connected to MCP server");
 
   const query = "Hello world from the client!";

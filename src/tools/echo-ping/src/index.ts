@@ -11,7 +11,7 @@ const app = express();
 
 const server = new McpServer(
   {
-    name: "mcp-server",
+    name: "mcp-server-echo-ping",
     version: "1.0.0",
   },
   {
@@ -80,4 +80,14 @@ app.listen(5000, "0.0.0.0", () => {
   log(
     "For example: new SSEClientTransport(new URL('http://0.0.0.0:5000/sse'))"
   );
+});
+
+process.on('SIGINT', () => {
+  log("Received SIGINT. Cleaning up...");
+  if (transport) {
+    transport.close();
+  }
+  server.close();
+  log("Server closed.");
+  process.exit(0);
 });
