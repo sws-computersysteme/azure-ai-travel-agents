@@ -26,6 +26,7 @@ export interface ChatEvent {
   data?: any;
   message?: string;
   statusCode?: number;
+  agentName?: string;
 }
 
 export type ChatEventErrorType = 'client' | 'server' | 'general' | undefined;
@@ -46,6 +47,9 @@ export interface ChatMessage {
   metadata?: {
     events?: ChatEvent[] | null;
   };
+  reasoning: {
+    content: string;
+  }[]
 }
 
 @Injectable({

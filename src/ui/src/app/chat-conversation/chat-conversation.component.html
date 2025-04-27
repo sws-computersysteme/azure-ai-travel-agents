@@ -66,23 +66,27 @@
 
           <section class="flex flex-col gap-2 w-full">
             <accordion-preview
-              [isOpened]="$last"
+              [isOpened]="false"
               class="flex flex-row rounded-3xl px-4 py-2 w-full overflow-y-scroll"
             >
-              @for (event of message.metadata?.events; track $index) {
+              @for (evt of message.metadata?.events; track $index) {
+                @if(evt.event !== 'AgentStream') {
               <div
                 hlmBadge
                 brnHoverCardTrigger
                 variant="outline"
-                class="agent-event-{{ event.event }}"
+                class="agent-event-{{ evt.event }}"
               >
-                {{ event.event }}
+                  @if(evt.data.agentName) {
+                    {{ evt.data.agentName + ":" + evt.event }}
+                  } @else {
+                    {{ evt.event }}
+                  }
               </div>
-              <pre><code>{{event.data | json}}</code></pre>
+              <pre><code>{{evt.data | json}}</code></pre>
               <brn-separator hlmSeparator />
               }
-
-              <span #eot class="font-mono text-xs">End Of Thought</span>
+            }
             </accordion-preview>
           </section>
 
@@ -92,6 +96,11 @@
           } @else {
           <div hlmAlert class="bg-muted gap-10">
             <p hlmAlertDesc>
+              @for(reason of message.reasoning; track reason) {
+                <markdown class="italic text-gray-400">{{ reason.content }}</markdown>
+              }
+              @if (message.reasoning.length) { <br> }
+
               <markdown>{{ message.content }}</markdown>
             </p>
           </div>
@@ -107,6 +116,7 @@
       </ng-container>
       }
     </div>
+    <span #eot class="font-mono text-xs"></span>
   </ng-scrollbar>
 
   <div hlmCardFooter class="flex-col items-start gap-2">
@@ -128,7 +138,7 @@
           class="flex-1 border-2 rounded-3xl border-black min-h-[80px] w-full"
           placeholder="Type your message here (Shift + Enter for new line)..."
           [(ngModel)]="chatService.userMessage"
-          (keyup.enter)="chatService.sendMessage()"
+          (keyup.shift.enter)="chatService.sendMessage()"
         ></textarea>
         <hlm-hint></hlm-hint>
       </hlm-form-field>

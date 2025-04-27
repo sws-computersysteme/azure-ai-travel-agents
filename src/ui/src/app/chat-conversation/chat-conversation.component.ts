@@ -110,14 +110,8 @@ export class ChatConversationComponent implements OnInit {
   constructor(public chatService: ChatService) {
     this.chatService.messagesStream.subscribe((messages) => {
       if (messages.length === 0) return;
-      console.log(this.agentMessages());
       setTimeout(() => {
-        // this.agentMessages()?.at(-1)?.nativeElement.scrollIntoView({
-        //   behavior: 'smooth',
-        // });
-        this.eot()?.nativeElement.scrollIntoView({
-          behavior: 'smooth',
-        });
+        this.scrollToBottom();
       }, 0);
     });
   }
@@ -125,6 +119,12 @@ export class ChatConversationComponent implements OnInit {
   async ngOnInit() {
     this.resetChat();
     await this.chatService.fetchAvailableTools();
+  }
+
+  scrollToBottom() {
+    this.eot()?.nativeElement.scrollIntoView({
+      behavior: 'smooth',
+    });
   }
 
   toggleTool() {}

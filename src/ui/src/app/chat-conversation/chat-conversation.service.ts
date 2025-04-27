@@ -35,6 +35,7 @@ export class ChatService {
             this.messagesBuffer.push({
               role: 'assistant',
               content: '',
+              reasoning: [],
               timestamp: new Date(),
             });
             this.messagesStream.next(this.messagesBuffer);
@@ -67,7 +68,7 @@ export class ChatService {
   async fetchAvailableTools() {
     const toolsResult = await this.apiService.fetchAvailableTools();
     if (toolsResult) {
-      this.tools.set(toolsResult.tools);
+      this.tools.set(toolsResult.tools.filter((tool) => tool.selected));
     }
   }
 
@@ -78,6 +79,7 @@ export class ChatService {
     this.messagesBuffer.push({
       role: 'user',
       content: messageText,
+      reasoning: [],
       timestamp: new Date(),
     });
 
@@ -136,11 +138,24 @@ export class ChatService {
           this.assistantMessageInProgress.set(false);
           this.isLoading.set(false);
           break;
+        case 'AgentToolCallResult':
+          let state = {};
+          if (typeof event.data.raw === 'string') {
+            state = {
+              reasoning: [
+                {
+                  content: event.data.raw,
+                },
+              ],
+            };
+          }
+          this.updateAndNotifyAgentChatMessageState(delta, state);
+          break;
+
         case 'AgentOutput':
         case 'AgentInput':
         case 'AgentSetup':
         case 'AgentStepEvent':
-        case 'AgentToolCallResult':
         case 'AgentToolCall':
         case 'ToolResultsEvent':
         case 'ToolCallsEvent':
@@ -179,6 +194,10 @@ export class ChatService {
         ...state?.metadata,
         events: state?.metadata?.events,
       };
+      lastMessage.reasoning = [
+        ...(lastMessage.reasoning || []),
+        ...(state?.reasoning || []),
+      ];
       lastMessage.timestamp = new Date();
       this.messagesStream.next([...this.messagesBuffer]);
     }
