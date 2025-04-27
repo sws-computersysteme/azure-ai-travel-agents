@@ -6,7 +6,8 @@ export type McpServerName =
   | "web-search"
   | "itinerary-planning"
   | "model-inference"
-  | "code-evaluation";
+  | "code-evaluation"
+  | "destination-recommendation";
 
 export const McpToolsConfig = (): {
   [k in McpServerName]: McpServerDefinition;
@@ -34,5 +35,9 @@ export const McpToolsConfig = (): {
   "code-evaluation": {
     serverUrl: process.env["TOOL_CODE_EVALUATION_URL"] as string,
     serverName: "code-evaluation",
+  },
+  "destination-recommendation": {
+    serverUrl: process.env["TOOL_DESTINATION_RECOMMENDATION_URL"] as string,
+    serverName: "destination-recommendation",
   },
 });
