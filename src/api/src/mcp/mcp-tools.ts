@@ -75,7 +75,7 @@ export async function mcpToolsList(config: McpServerDefinition[]) {
           serverName,
           serverUrl,
           reachable: true,
-          selected: true,
+          selected: serverName !== 'echo-ping',
           tools,
         };
       } catch (error: unknown) {
