@@ -161,7 +161,7 @@ export class ChatConversationComponent implements OnInit {
   @HostListener('window:keyup.shift.enter', ['$event'])
   sendMessage(event: any) {
     event.preventDefault();
-    this.chatService.sendMessage();
+    this.chatService.sendMessage(event);
   }
 
   scrollToBottom() {

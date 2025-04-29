@@ -72,7 +72,12 @@ export class ChatService {
     }
   }
 
-  async sendMessage() {
+  async sendMessage(event: Event) {
+
+    if ((event as KeyboardEvent).shiftKey) {
+      return;
+    }
+
     const messageText = this.userMessage();
     if (!messageText.trim()) return;
 

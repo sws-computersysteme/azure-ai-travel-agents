@@ -48,19 +48,22 @@
     class="flex-1 h-[800px] p-10 overflow-y-auto mb-10"
   >
     <div class="flex flex-col gap-4">
-
       @if ((chatService.messagesStream | async)?.length === 0) {
-        <div class="flex flex-row gap-4">
-          @for(prompt of samplePrompts; track prompt) {
-            <div
-              class="p-10 bg-muted rounded-md flex items-center justify-center cursor-pointer border hover:border-red"
-              (click)="chatService.userMessage.set(prompt)"
-            >
-              <p class="display-box max-w-200 line-clamp-4 box-orient-vertical overflow-hidden text-ellipsis">
-                {{ prompt }}
-            </div>
-          }
+      <div class="flex flex-row gap-4">
+        @for(prompt of samplePrompts; track prompt) {
+        <div
+          class="p-10 bg-muted rounded-md flex items-center justify-center cursor-pointer border hover:border-red"
+          (click)="chatService.userMessage.set(prompt)"
+        >
+          <p
+            class="display-box max-w-200 line-clamp-4 box-orient-vertical overflow-hidden text-ellipsis"
+          >
+            {{ prompt }}
+          </p>
         </div>
+
+        }
+      </div>
       }
       <!-- loop over all messages -->
       @for (message of (chatService.messagesStream | async); track message) {
@@ -134,30 +137,30 @@
   <div hlmCardFooter class="flex-col items-start gap-2">
     <div class="flex gap-2"></div>
     <div class="flex gap-2 w-full mt-10">
-      <hlm-form-field class="flex-col flex w-full">
-        <textarea
-          hlmInput
-          type="text"
-          class="flex-1 border-2 rounded-3xl border-black min-h-[80px] w-full"
-          placeholder="Type your message here (Shift + Enter for new line)..."
-          [(ngModel)]="chatService.userMessage"
-          (keyup.shift.enter)="chatService.sendMessage()"
-        ></textarea>
-        <hlm-hint>Hint: Hold Shift+P to insert a sample prompt.</hlm-hint>
-      </hlm-form-field>
-      <div class="flex flex-col gap-2">
+      <section class="relative flex-1 max-h-[200px]">
+        <hlm-form-field class="flex-col flex w-full h-[200px] border rounded-2xl p-4 ">
+          <textarea
+            hlmInput
+            type="text"
+            class="flex-1 border-0 pt-2 mb-2 w-[95%] overflow-y-auto rounded-xl resize-none "
+            placeholder="Type your message here (Shift + Enter for new line)..."
+            [(ngModel)]="chatService.userMessage"
+            (keyup.enter)="chatService.sendMessage($event)"
+          ></textarea>
+          <hlm-hint class="mr-1 mt-10">AI-generated content may be incorrect</hlm-hint>
+        </hlm-form-field>
         <button
           hlmBtn
           variant="ghost"
-          class="rounded-full"
+          class="rounded-full absolute right-2 top-20"
           [disabled]="
             chatService.isLoading() || !chatService.userMessage().trim()
           "
-          (click)="chatService.sendMessage()"
+          (click)="chatService.sendMessage($event)"
         >
           <ng-icon hlm size="lg" name="lucideSendHorizontal" />
         </button>
-        <brn-popover sideOffset="5">
+        <brn-popover sideOffset="5" class="right-2 top-[-50px] absolute">
           <button id="edit-profile" variant="ghost" brnPopoverTrigger hlmBtn>
             <ng-icon hlm size="lg" name="lucideBot" />
           </button>
@@ -189,7 +192,7 @@
             </div>
           </div>
         </brn-popover>
-      </div>
+      </section>
     </div>
   </div>
 </div>
