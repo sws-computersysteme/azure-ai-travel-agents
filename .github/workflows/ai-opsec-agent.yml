@@ -22,8 +22,21 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-latest
-
+    name: "Audit Codebase"
     steps:
-    - name: Checkout repository
-      uses: ./ai-opsec-agent@v1
+      - name: Checkout code 
+        uses: actions/checkout@v4
+      - name: Audit Codebase
+        uses: ./.github/actions/ai-opsec-agent
+        with:
+            AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+            AZURE_OPENAI_API_KEY: ${{ secrets.WASSIM_AOAI_API_KEY }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            output: security-audit.md
+        
+      - name: Upload as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-audit
+          path: security-audit.md
 

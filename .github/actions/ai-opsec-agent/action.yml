@@ -6,16 +6,23 @@ branding:
   color: "blue"
 
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  AZURE_OPENAI_ENDPOINT:
+    description: 'The endpoint for the Azure OpenAI service'
     required: true
-    default: 'World'
+  AZURE_OPENAI_API_KEY:
+    description: 'The API key for the Azure OpenAI service'
+    required: true
+  GITHUB_TOKEN:
+    description: 'GitHub token for authentication'
+    required: true
+  output: 
+    description: 'The output of the action, a security audit report in Markdown format'
+    required: true
+    default: 'security-audit.md'
+    
 runs:
   using: "composite"
   steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
-
     - name: Pack repository with Repomix
       shell: bash
       run: |
@@ -37,7 +44,7 @@ runs:
         path: repomix-output.txt
         retention-days: 7
 
-    - name: 📝  Build audit prompt
+    - name: Build audit prompt
       shell: bash
       run: |
         cat > prompt.txt <<EOF
@@ -122,12 +129,12 @@ runs:
         -  private enAudit ARM and Bicep templates for public endpoint exposures, suggestingdpoints with references to Azure Private Endpoints (https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-overview).
         EOF
 
-    - name: 🤖  Call Model
+    - name: Call Model
       shell: bash
       id: call-model
       env:
-        AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
-        AZURE_OPENAI_API_KEY: ${{ secrets.WASSIM_AOAI_API_KEY }}
+        AZURE_OPENAI_ENDPOINT: ${{ inputs.AZURE_OPENAI_ENDPOINT }}
+        AZURE_OPENAI_API_KEY: ${{ inputs.AZURE_OPENAI_API_KEY }}
       run: |
         prompt_content=$(jq -Rs . prompt.txt)
         repomix_output=$(jq -Rs . repomix-output.txt)
@@ -152,7 +159,7 @@ runs:
           -H "Authorization: Bearer $AZURE_OPENAI_API_KEY" \
           -d @payload.json
 
-    - name: 📄  Extract markdown report
+    - name: Extract markdown report
       shell: bash
       run: |
         cat response.json
@@ -162,20 +169,14 @@ runs:
           exit 1
         fi
         echo "Extracting markdown report from model response..."
-        echo "$output" > security-audit.md
+        echo "$output" > ${{ inputs.output }}
 
-    - name: 📦  Upload as artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: security-audit
-        path: security-audit.md
-
-    - name: 💬  Comment on PR
+    - name: Comment on PR
       if: github.event_name == 'pull_request'
       uses: marocchino/sticky-pull-request-comment@v2
       with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        path: security-audit.md
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        path: ${{ inputs.output }}
         hide_and_recreate: true
         hide_classify: "OUTDATED"
 
