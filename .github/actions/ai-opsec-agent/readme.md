@@ -78,7 +78,7 @@ You can also run the workflow manually from the GitHub Actions tab using the "Ru
 
 ## Example Workflow File
 
-See [`ai-opsec-agent.yml`](./ai-opsec-agent.yml) for the full, ready-to-use workflow.
+See [`ai-opsec-agent.yml`](./../../workflows/ai-opsec-agent.yml) for the full, ready-to-use workflow.
 
 ---
 
