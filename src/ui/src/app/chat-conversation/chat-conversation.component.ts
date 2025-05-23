@@ -79,7 +79,15 @@ const SAMPLE_PROMPT_2 = `Hi there! I'd love help planning a trip to Iceland. I'm
 
 I'm open to all kinds of adventures—whether it's chasing waterfalls, soaking in hot springs, or discovering small Icelandic towns. A tool-informed, creative itinerary would be amazing!`;
 
-const SAMPLE_PROMPT_3 = `I'm planning a trip to Morocco and would appreciate a complete, tool-assisted itinerary. Please use your travel planning systems to recommend key destinations, daily activities, and a logical route. I'm looking for a balanced experience that includes cultural landmarks, natural scenery, and time to relax. Efficient travel logistics and seasonal considerations would be great to include.`;
+const SAMPLE_PROMPT_3 = `I'm planning a trip to Morocco and would appreciate a complete, tool-assisted itinerary.
+Please use your travel planning systems to recommend key destinations, daily activities, and a logical route.
+I'm looking for a balanced experience that includes cultural landmarks, natural scenery, and time to relax.
+Efficient travel logistics and seasonal considerations would be great to include.
+
+Travel Dates: as soon as possible.
+Starting Point: from Paris, France.
+Duration: 10 days.
+Budget: 5000 euros.`;
 
 @Component({
   selector: 'app-chat-conversation',
