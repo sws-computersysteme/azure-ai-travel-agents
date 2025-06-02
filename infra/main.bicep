@@ -61,6 +61,9 @@ var llamaIndexConfig = {
     dim: '1024'
     capacity: 10
   }
+  sampleAccessTokens: {
+    echo: '123-this-is-a-fake-token-please-use-a-token-provider'
+  }
   model_provider: 'openai'
   llm_temperature: '0.7'
   llm_max_tokens: '100'
@@ -109,3 +112,4 @@ output EMBEDDING_MODEL string = llamaIndexConfig.embedding.model
 output EMBEDDING_DIM string = llamaIndexConfig.embedding.dim
 output AZURE_CLIENT_ID string = resources.outputs.AZURE_CLIENT_ID
 output AZURE_TENANT_ID string = tenant().tenantId
+output MCP_ECHO_PING_ACCESS_TOKEN string = llamaIndexConfig.sampleAccessTokens.echo

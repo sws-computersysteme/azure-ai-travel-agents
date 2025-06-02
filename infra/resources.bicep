@@ -214,6 +214,10 @@ module api 'br/public:avm/res/app/container-app:0.8.0' = {
             value: 'https://code-evaluation.internal.${containerAppsEnvironment.outputs.defaultDomain}'
           }
           {
+            name: 'MCP_ECHO_PING_ACCESS_TOKEN'
+            value: llamaIndexConfig.sampleAccessTokens.echo
+          }
+          {
             name: 'PORT'
             value: '4000'
           }
@@ -659,6 +663,10 @@ module echoPing 'br/public:avm/res/app/container-app:0.8.0' = {
           {
             name: 'AZURE_CLIENT_ID'
             value: echoPingIdentity.outputs.clientId
+          }
+          {
+            name: 'MCP_ECHO_PING_ACCESS_TOKEN'
+            value: llamaIndexConfig.sampleAccessTokens.echo
           }
           {
             name: 'PORT'
