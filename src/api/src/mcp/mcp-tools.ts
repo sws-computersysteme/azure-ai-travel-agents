@@ -24,7 +24,7 @@ export type McpServerDefinition = {
 function client(config: LlamaIndexMCPClientOptions): MCPSSEClient | MCPHTTPClient {
   if (config.type === "sse") {
     // legacy implementation using SSE
-    return new MCPSSEClient("llamaindex-sse-client", config.url);
+    return new MCPSSEClient("llamaindex-sse-client", config.url, config.accessToken);
   } else {
     return new MCPHTTPClient("llamaindex-http-client", config.url, config.accessToken);
   }
@@ -49,7 +49,7 @@ export async function mcpToolsList(config: McpServerDefinition[]) {
           url,
           type,
           reachable: true,
-          selected: true,
+          selected: id !== "echo-ping",
           tools,
         };
       } catch (error: unknown) {

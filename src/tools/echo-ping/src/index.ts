@@ -46,6 +46,7 @@ router.use((req, res, next) => {
     return;
   }
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    console.error('Missing or invalid Authorization header.');
     res.status(401).json({ error: 'Missing or invalid Authorization header.' });
     return;
   }
