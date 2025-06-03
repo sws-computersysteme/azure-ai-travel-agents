@@ -1,4 +1,4 @@
-# The AI Travel Agents
+# Azure AI Travel Agents
 
 The AI Travel Agents is a robust **enterprise application** that leverages multiple **AI agents** to enhance travel agency operations. The application demonstrates how **six AI agents** collaborate to assist employees in handling customer queries, providing destination recommendations, and planning itineraries.
 
@@ -95,6 +95,12 @@ npm run start --prefix=src/ui
 ## Advanced Setup
 
 To run the application in a more advanced local setup or deploy to Azure, please refer to the [Advanced Setup](docs/advanced-setup.md) documentation. This includes setting up the Azure Container Apps environment, configuring the services, and deploying the application to Azure.
+
+## Join the Community
+We encourage you to join our Azure AI Foundry Developer Community​ to share your experiences, ask questions, and get support:
+
+- [aka.ms/foundry/discord​](https://aka.ms/foundry/discord) - Join our Discord community for real-time discussions and support.
+- [aka.ms/foundry/forum](https://aka.ms/foundry/forum) - Visit our forum to ask questions and share your knowledge.
 
 ## Contributing
 
