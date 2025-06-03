@@ -412,5 +412,6 @@ build
 dist
 .env
 .env.*
+!.env.sample
 .azure
 .DS_Store
