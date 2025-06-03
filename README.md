@@ -24,7 +24,7 @@ The architecture of the AI Travel Agents application is designed to be modular a
 - The Agent Workflow Service orchestrates the interaction between the agents and MCP clients, allowing them to work together seamlessly.
 - The Aspire Dashboard is used to monitor the application, providing insights into the performance and behavior of the agents (through the [OpenTelemetry integration](https://opentelemetry.io/ecosystem/integrations/)).
 
-![High-Level Architecture](docs/ai-travel-agents-architecture-diagram.svg)
+![High-Level Architecture](docs/ai-travel-agents-architecture-diagram.png)
 
 ## Project Structure
 
