@@ -23,7 +23,7 @@
 
 
 
-[Overview](#overview) • [Architecture](#high-level-architecture) • [Features](#features) • [Preview the application locally](#preview-the-application-locally) • [Cost estimation](#cost-estimation) • [Advanced Setup](#advanced-setup) • [Join the Community](#join-the-community)
+[Overview](#overview) • [Architecture](#high-level-architecture) • [Features](#features) • [Preview the application locally](#preview-the-application-locally) • [Cost estimation](#cost-estimation) • [Join the Community](#join-the-community)
 
 ![Animation showing the chat app in action](./docs/azure-ai-travel-agent-demo-1.gif)
 
