@@ -129,19 +129,21 @@ This will also install the necessary dependencies for the UI and API services, a
 5. Open a new terminal and run the following command to start the API:
 
 ```bash
-npm run start --prefix=src/api
+npm start --prefix=src/api
 ```
 
 6. Open a new terminal and run the following command to start the UI:
 
 ```bash
-npm run start --prefix=src/ui
+npm start --prefix=src/ui
 ```
 
 7. Navigate to the UI in your web browser at `http://localhost:4200`.
 
 ![UI Screenshot](docs/azure-ai-travel-agent-demo-1.png)
 
+> [!IMPORTANT]
+> In case you encounter issues when starting either the API or UI, try running `azd hooks run postprovision` to force run the post-provisioning hooks. This is due to an issue with the `azd provision` command not executing the post-provisioning hooks automatically, in some cases, the first time you run it.
 
 ### Use GitHub Codespaces
 
