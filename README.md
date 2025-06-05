@@ -62,13 +62,14 @@ The architecture of the AI Travel Agents application is designed to be modular a
 - Orchestrated by [LlamaIndex.TS](https://ts.llamaindex.ai/)
 - Supercharged by [MCP](https://modelcontextprotocol.io/introduction)
 - Deployed serverlessly via [Azure Container Apps](https://learn.microsoft.com/azure/container-apps/)
+- Includes an [llms.txt](./llms.txt) file to provide information to help LLMs use our website at inference time
 
 ## Prerequisites
 
 Ensure you have the following installed before running the application:
 
-- **[Docker](https://www.docker.com/)**
 - **[Azure Developer CLI](https://aka.ms/azure-dev/install)**
+- **[Docker](https://www.docker.com/)**
 - **[Git](https://git-scm.com/downloads)**
 - **[Node.js](https://nodejs.org/en/download)** (for the UI and API services)
 - **[Powershell 7+ (pwsh)](https://github.com/powershell/powershell)** - For Windows users only.

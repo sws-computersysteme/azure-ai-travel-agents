@@ -36,6 +36,9 @@ The content is organized as follows:
 # Directory Structure
 ```
 infra/
+  hooks/
+    postprovision.ps1
+    postprovision.sh
   modules/
     fetch-container-image.bicep
   abbreviations.json
@@ -744,6 +747,1058 @@ Global
 EndGlobal
 ````
 
+## File: src/tools/destination-recommendation/.mvn/wrapper/maven-wrapper.properties
+````
+distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.6/apache-maven-3.9.6-bin.zip
+wrapperUrl=https://repo.maven.apache.org/maven2/io/takari/maven-wrapper/0.5.6/maven-wrapper-0.5.6.jar
+````
+
+## File: src/tools/destination-recommendation/.mvn/wrapper/MavenWrapperDownloader.java
+````java
+/*
+ * Copyright 2007-present the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import java.net.*;
+import java.io.*;
+import java.nio.channels.*;
+import java.util.Properties;
+
+public class MavenWrapperDownloader {
+
+    private static final String WRAPPER_VERSION = "0.5.6";
+    /**
+     * Default URL to download the maven-wrapper.jar from, if no 'downloadUrl' is provided.
+     */
+    private static final String DEFAULT_DOWNLOAD_URL = "https://repo.maven.apache.org/maven2/io/takari/maven-wrapper/"
+        + WRAPPER_VERSION + "/maven-wrapper-" + WRAPPER_VERSION + ".jar";
+
+    /**
+     * Path to the maven-wrapper.properties file, which might contain a downloadUrl property to
+     * use instead of the default one.
+     */
+    private static final String MAVEN_WRAPPER_PROPERTIES_PATH =
+            ".mvn/wrapper/maven-wrapper.properties";
+
+    /**
+     * Path where the maven-wrapper.jar will be saved to.
+     */
+    private static final String MAVEN_WRAPPER_JAR_PATH =
+            ".mvn/wrapper/maven-wrapper.jar";
+
+    /**
+     * Name of the property which should be used to override the default download url for the wrapper.
+     */
+    private static final String PROPERTY_NAME_WRAPPER_URL = "wrapperUrl";
+
+    public static void main(String args[]) {
+        System.out.println("- Downloader started");
+        File baseDirectory = new File(args[0]);
+        System.out.println("- Using base directory: " + baseDirectory.getAbsolutePath());
+
+        // If the maven-wrapper.properties exists, read it and check if it contains a custom
+        // wrapperUrl parameter.
+        File mavenWrapperPropertyFile = new File(baseDirectory, MAVEN_WRAPPER_PROPERTIES_PATH);
+        String url = DEFAULT_DOWNLOAD_URL;
+        if(mavenWrapperPropertyFile.exists()) {
+            FileInputStream mavenWrapperPropertyFileInputStream = null;
+            try {
+                mavenWrapperPropertyFileInputStream = new FileInputStream(mavenWrapperPropertyFile);
+                Properties mavenWrapperProperties = new Properties();
+                mavenWrapperProperties.load(mavenWrapperPropertyFileInputStream);
+                url = mavenWrapperProperties.getProperty(PROPERTY_NAME_WRAPPER_URL, url);
+            } catch (IOException e) {
+                System.out.println("- ERROR loading '" + MAVEN_WRAPPER_PROPERTIES_PATH + "'");
+            } finally {
+                try {
+                    if(mavenWrapperPropertyFileInputStream != null) {
+                        mavenWrapperPropertyFileInputStream.close();
+                    }
+                } catch (IOException e) {
+                    // Ignore ...
+                }
+            }
+        }
+        System.out.println("- Downloading from: " + url);
+
+        File outputFile = new File(baseDirectory.getAbsolutePath(), MAVEN_WRAPPER_JAR_PATH);
+        if(!outputFile.getParentFile().exists()) {
+            if(!outputFile.getParentFile().mkdirs()) {
+                System.out.println(
+                        "- ERROR creating output directory '" + outputFile.getParentFile().getAbsolutePath() + "'");
+            }
+        }
+        System.out.println("- Downloading to: " + outputFile.getAbsolutePath());
+        try {
+            downloadFileFromURL(url, outputFile);
+            System.out.println("Done");
+            System.exit(0);
+        } catch (Throwable e) {
+            System.out.println("- Error downloading");
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    private static void downloadFileFromURL(String urlString, File destination) throws Exception {
+        if (System.getenv("MVNW_USERNAME") != null && System.getenv("MVNW_PASSWORD") != null) {
+            String username = System.getenv("MVNW_USERNAME");
+            char[] password = System.getenv("MVNW_PASSWORD").toCharArray();
+            Authenticator.setDefault(new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(username, password);
+                }
+            });
+        }
+        URL website = new URL(urlString);
+        ReadableByteChannel rbc;
+        rbc = Channels.newChannel(website.openStream());
+        FileOutputStream fos = new FileOutputStream(destination);
+        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+        fos.close();
+        rbc.close();
+    }
+
+}
+````
+
+## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/config/StartupConfig.java
+````java
+package com.microsoft.mcp.sample.server.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * Configuration class that displays welcome and usage information at application startup.
+ */
+@Configuration
+public class StartupConfig {
+
+    @Value("${destination.service.welcome:Welcome to the Destination Recommendation Service!}")
+    private String welcomeMessage;
+    
+    @Value("${destination.service.usage:}")
+    private String usageMessage;
+    
+    /**
+     * Display startup information when the application launches.
+     */
+    @Bean
+    public CommandLineRunner startupInfo() {
+        return args -> {
+            System.out.println("\n" + "=".repeat(80));
+            System.out.println(welcomeMessage);
+            System.out.println("=".repeat(80));
+            
+            if (usageMessage != null && !usageMessage.isEmpty()) {
+                System.out.println("\nUsage Information:");
+                System.out.println(usageMessage);
+                System.out.println("\nEndpoint: http://localhost:8080/v1/tools");
+                System.out.println("\nSee the README.md for more information on how to use the service.");
+            }
+            
+            System.out.println("\nThe destination recommendation service is now ready to accept requests!");
+            System.out.println("=".repeat(80) + "\n");
+        };
+    }
+}
+````
+
+## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/controller/HealthController.java
+````java
+package com.microsoft.mcp.sample.server.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.microsoft.mcp.sample.server.service.DestinationService;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Controller for health check and information endpoints.
+ */
+@RestController
+public class HealthController {
+    
+    private final DestinationService destinationService;
+    
+    @Autowired
+    public HealthController(DestinationService destinationService) {
+        this.destinationService = destinationService;
+    }    /**
+     * Simple health check endpoint.
+     * 
+     * @return Health status information
+     */
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, Object>> healthCheck() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "UP");
+        response.put("timestamp", LocalDateTime.now().toString());
+        response.put("service", "Destination Recommendation Service");
+        
+        return ResponseEntity.ok(response);
+    }
+    
+    /**
+     * Information endpoint about the service.
+     * 
+     * @return Service information
+     */
+    @GetMapping("/info")
+    public ResponseEntity<Map<String, Object>> serviceInfo() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("service", "Destination Recommendation Service");
+        response.put("version", "1.0.0");
+        response.put("endpoint", "/v1/tools");
+        
+        Map<String, String> tools = new HashMap<>();
+        tools.put("getDestinationsByActivity", "Get destinations by activity type (BEACH, ADVENTURE, etc.)");
+        tools.put("getDestinationsByBudget", "Get destinations by budget (BUDGET, MODERATE, LUXURY)");
+        tools.put("getDestinationsBySeason", "Get destinations by season (SPRING, SUMMER, etc.)");
+        tools.put("getDestinationsByPreferences", "Get destinations matching multiple criteria");
+        tools.put("getAllDestinations", "Get all available destinations");
+        response.put("availableTools", tools);
+        
+        return ResponseEntity.ok(response);
+    }
+}
+````
+
+## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/exception/GlobalExceptionHandler.java
+````java
+package com.microsoft.mcp.sample.server.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+/**
+ * Global exception handler for the destination recommendation service.
+ */
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    /**
+     * Handle IllegalArgumentException which occurs when invalid input is provided.
+     * 
+     * @param ex The exception that was thrown
+     * @return A response with error details
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ErrorResponse error = new ErrorResponse(
+            "Invalid_Input", 
+            "Invalid input parameter: " + ex.getMessage(),
+            "Please check your input values and try again.");
+        
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handle generic exceptions that are not specifically handled elsewhere.
+     * 
+     * @param ex The exception that was thrown
+     * @return A response with error details
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+        ErrorResponse error = new ErrorResponse(
+            "Internal_Error", 
+            "An unexpected error occurred: " + ex.getMessage(),
+            "Please try again later or contact support if the issue persists.");
+        
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Simple error response class for consistent error reporting.
+     */
+    public static class ErrorResponse {
+        private String code;
+        private String message;
+        private String resolution;
+
+        public ErrorResponse(String code, String message, String resolution) {
+            this.code = code;
+            this.message = message;
+            this.resolution = resolution;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public String getResolution() {
+            return resolution;
+        }
+    }
+}
+````
+
+## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/model/ActivityType.java
+````java
+package com.microsoft.mcp.sample.server.model;
+
+/**
+ * Enum representing different types of activities available at destinations.
+ */
+public enum ActivityType {
+    BEACH,
+    ADVENTURE,
+    CULTURAL,
+    RELAXATION,
+    URBAN_EXPLORATION,
+    NATURE,
+    WINTER_SPORTS
+}
+````
+
+## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/model/BudgetCategory.java
+````java
+package com.microsoft.mcp.sample.server.model;
+
+/**
+ * Enum representing budget categories for destinations.
+ */
+public enum BudgetCategory {
+    BUDGET,
+    MODERATE,
+    LUXURY
+}
+````
+
+## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/model/PreferenceRequest.java
+````java
+package com.microsoft.mcp.sample.server.model;
+
+/**
+ * Class representing user preferences for destination recommendations.
+ * Using String types instead of enum references to avoid compilation issues.
+ */
+public class PreferenceRequest {
+    private String preferredActivity;  // Changed from ActivityType to String
+    private String budgetCategory;     // Changed from BudgetCategory to String
+    private String preferredSeason;    // Changed from Season to String
+    private Boolean familyFriendly;
+    private Integer numberOfDestinations;
+
+    // Default constructor
+    public PreferenceRequest() {
+        this.numberOfDestinations = 3; // Default to returning 3 destinations
+    }
+
+    // Constructor
+    public PreferenceRequest(String preferredActivity, String budgetCategory, 
+                          String preferredSeason, Boolean familyFriendly, Integer numberOfDestinations) {
+        this.preferredActivity = preferredActivity;
+        this.budgetCategory = budgetCategory;
+        this.preferredSeason = preferredSeason;
+        this.familyFriendly = familyFriendly;
+        this.numberOfDestinations = numberOfDestinations != null ? numberOfDestinations : 3;
+    }
+
+    // Getters and setters
+    public String getPreferredActivity() {
+        return preferredActivity;
+    }
+
+    public void setPreferredActivity(String preferredActivity) {
+        this.preferredActivity = preferredActivity;
+    }
+
+    public String getBudgetCategory() {
+        return budgetCategory;
+    }
+
+    public void setBudgetCategory(String budgetCategory) {
+        this.budgetCategory = budgetCategory;
+    }
+
+    public String getPreferredSeason() {
+        return preferredSeason;
+    }
+
+    public void setPreferredSeason(String preferredSeason) {
+        this.preferredSeason = preferredSeason;
+    }
+
+    public Boolean getFamilyFriendly() {
+        return familyFriendly;
+    }
+
+    public void setFamilyFriendly(Boolean familyFriendly) {
+        this.familyFriendly = familyFriendly;
+    }
+
+    public Integer getNumberOfDestinations() {
+        return numberOfDestinations;
+    }
+
+    public void setNumberOfDestinations(Integer numberOfDestinations) {
+        this.numberOfDestinations = numberOfDestinations != null ? numberOfDestinations : 3;
+    }
+}
+````
+
+## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/model/Season.java
+````java
+package com.microsoft.mcp.sample.server.model;
+
+/**
+ * Enum representing seasons when destinations are best to visit.
+ */
+public enum Season {
+    SPRING,
+    SUMMER,
+    AUTUMN,
+    WINTER,
+    ALL_YEAR
+}
+````
+
+## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/service/DestinationService.java
+````java
+package com.microsoft.mcp.sample.server.service;
+
+import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.stereotype.Service;
+
+/**
+ * Service for providing travel destination recommendations.
+ */
+@Service
+public class DestinationService {
+
+    // Constants for activity types
+    public static final String BEACH = "BEACH";
+    public static final String ADVENTURE = "ADVENTURE";
+    public static final String CULTURAL = "CULTURAL";
+    public static final String RELAXATION = "RELAXATION";
+    public static final String URBAN_EXPLORATION = "URBAN_EXPLORATION";
+    public static final String NATURE = "NATURE";
+    public static final String WINTER_SPORTS = "WINTER_SPORTS";
+    
+    // Constants for budget categories
+    public static final String BUDGET = "BUDGET";
+    public static final String MODERATE = "MODERATE";
+    public static final String LUXURY = "LUXURY";
+    
+    // Constants for seasons
+    public static final String SPRING = "SPRING";
+    public static final String SUMMER = "SUMMER";
+    public static final String AUTUMN = "AUTUMN";
+    public static final String WINTER = "WINTER";
+    public static final String ALL_YEAR = "ALL_YEAR";
+
+    /**
+     * Echo back the input message
+     * @param message The message to echo
+     * @return The original message
+     */
+    @Tool(description = "Echo back the input message exactly as received")
+    public String echoMessage(String message) {
+        return message;
+    }
+
+    /**
+     * Recommend destinations based on activity type
+     * @param activityType The preferred activity type (BEACH, ADVENTURE, CULTURAL, RELAXATION, URBAN_EXPLORATION, NATURE, WINTER_SPORTS)
+     * @return A list of recommended destinations
+     */
+    @Tool(description = "Get travel destination recommendations based on preferred activity type")
+    public String getDestinationsByActivity(String activityType) {
+        try {
+            String activity = activityType.toUpperCase();
+            // Validate activity type
+            if (!isValidActivityType(activity)) {
+                return "Invalid activity type. Please use one of: BEACH, ADVENTURE, CULTURAL, RELAXATION, URBAN_EXPLORATION, NATURE, WINTER_SPORTS";
+            }
+            
+            return getDestinationsByPreference(activity, null, null, null);
+        } catch (Exception e) {
+            return "Invalid activity type. Please use one of: BEACH, ADVENTURE, CULTURAL, RELAXATION, URBAN_EXPLORATION, NATURE, WINTER_SPORTS";
+        }
+    }
+    
+    // Helper method to validate activity types
+    private boolean isValidActivityType(String activityType) {
+        return activityType.equals(BEACH) ||
+               activityType.equals(ADVENTURE) ||
+               activityType.equals(CULTURAL) ||
+               activityType.equals(RELAXATION) ||
+               activityType.equals(URBAN_EXPLORATION) ||
+               activityType.equals(NATURE) ||
+               activityType.equals(WINTER_SPORTS);
+    }
+
+    /**
+     * Recommend destinations based on budget category
+     * @param budget The budget category (BUDGET, MODERATE, LUXURY)
+     * @return A list of recommended destinations
+     */
+    @Tool(description = "Get travel destination recommendations based on budget category")
+    public String getDestinationsByBudget(String budget) {
+        try {
+            String budgetCategory = budget.toUpperCase();
+            // Validate budget category
+            if (!isValidBudgetCategory(budgetCategory)) {
+                return "Invalid budget category. Please use one of: BUDGET, MODERATE, LUXURY";
+            }
+            
+            return getDestinationsByPreference(null, budgetCategory, null, null);
+        } catch (Exception e) {
+            return "Invalid budget category. Please use one of: BUDGET, MODERATE, LUXURY";
+        }
+    }
+    
+    // Helper method to validate budget categories
+    private boolean isValidBudgetCategory(String budgetCategory) {
+        return budgetCategory.equals(BUDGET) ||
+               budgetCategory.equals(MODERATE) ||
+               budgetCategory.equals(LUXURY);
+    }
+
+    /**
+     * Recommend destinations based on season
+     * @param season The preferred season (SPRING, SUMMER, AUTUMN, WINTER, ALL_YEAR)
+     * @return A list of recommended destinations
+     */
+    @Tool(description = "Get travel destination recommendations based on preferred season")
+    public String getDestinationsBySeason(String season) {
+        try {
+            String preferredSeason = season.toUpperCase();
+            // Validate season
+            if (!isValidSeason(preferredSeason)) {
+                return "Invalid season. Please use one of: SPRING, SUMMER, AUTUMN, WINTER, ALL_YEAR";
+            }
+            
+            return getDestinationsByPreference(null, null, preferredSeason, null);
+        } catch (Exception e) {
+            return "Invalid season. Please use one of: SPRING, SUMMER, AUTUMN, WINTER, ALL_YEAR";
+        }
+    }
+    
+    // Helper method to validate seasons
+    private boolean isValidSeason(String season) {
+        return season.equals(SPRING) ||
+               season.equals(SUMMER) ||
+               season.equals(AUTUMN) ||
+               season.equals(WINTER) ||
+               season.equals(ALL_YEAR);
+    }
+
+    /**
+     * Recommend destinations based on multiple preferences
+     * @param activity The preferred activity type
+     * @param budget The budget category
+     * @param season The preferred season
+     * @param familyFriendly Whether the destination needs to be family-friendly
+     * @return A list of recommended destinations
+     */
+    @Tool(description = "Get travel destination recommendations based on multiple criteria")
+    public String getDestinationsByPreferences(String activity, String budget, String season, Boolean familyFriendly) {
+        try {
+            // Set preferences if provided
+            if (activity != null && !activity.isEmpty()) {
+                String activityUpper = activity.toUpperCase();
+                if (!isValidActivityType(activityUpper)) {
+                    return "Invalid activity type. Please use one of: BEACH, ADVENTURE, CULTURAL, RELAXATION, URBAN_EXPLORATION, NATURE, WINTER_SPORTS";
+                }
+            }
+            
+            if (budget != null && !budget.isEmpty()) {
+                String budgetUpper = budget.toUpperCase();
+                if (!isValidBudgetCategory(budgetUpper)) {
+                    return "Invalid budget category. Please use one of: BUDGET, MODERATE, LUXURY";
+                }
+            }
+            
+            if (season != null && !season.isEmpty()) {
+                String seasonUpper = season.toUpperCase();
+                if (!isValidSeason(seasonUpper)) {
+                    return "Invalid season. Please use one of: SPRING, SUMMER, AUTUMN, WINTER, ALL_YEAR";
+                }
+            }
+            
+            return getDestinationsByPreference(activity, budget, season, familyFriendly);
+        } catch (Exception e) {
+            return "Invalid input. Please check your parameters and try again.\n" + 
+                   "Activity types: BEACH, ADVENTURE, CULTURAL, RELAXATION, URBAN_EXPLORATION, NATURE, WINTER_SPORTS\n" +
+                   "Budget categories: BUDGET, MODERATE, LUXURY\n" +
+                   "Seasons: SPRING, SUMMER, AUTUMN, WINTER, ALL_YEAR";
+        }
+    }
+    
+    /**
+     * Get all available destinations
+     * @return A list of all destinations
+     */
+    @Tool(description = "Get a list of all available travel destinations")
+    public String getAllDestinations() {
+        return "Here are some popular travel destinations:\n\n" +
+               "📍 Bali, Indonesia\n" +
+               "⭐️ Beautiful beaches with vibrant culture and lush landscapes.\n" +
+               "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: SUMMER | Family Friendly: Yes\n\n" +
+               "📍 Cancun, Mexico\n" +
+               "⭐️ White sandy beaches with crystal clear waters and vibrant nightlife.\n" +
+               "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: WINTER | Family Friendly: Yes\n\n" +
+               "📍 Maldives, Maldives\n" +
+               "⭐️ Luxurious overwater bungalows and pristine beaches perfect for relaxation.\n" +
+               "🏷️ Activity: BEACH | Budget: LUXURY | Best Season: ALL_YEAR | Family Friendly: Yes";
+    }
+    
+    /**
+     * Helper method to get destinations based on preference
+     */
+    private String getDestinationsByPreference(String activity, String budget, String season, Boolean familyFriendly) {
+        // We'll return some hardcoded results based on the preferences
+        if (activity != null && activity.equals(BEACH)) {
+            return "Here are some beach destinations for you:\n\n" +
+                   "📍 Bali, Indonesia\n" +
+                   "⭐️ Beautiful beaches with vibrant culture and lush landscapes.\n" +
+                   "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: SUMMER | Family Friendly: Yes\n\n" +
+                   "📍 Cancun, Mexico\n" +
+                   "⭐️ White sandy beaches with crystal clear waters and vibrant nightlife.\n" +
+                   "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: WINTER | Family Friendly: Yes\n\n" +
+                   "📍 Maldives, Maldives\n" +
+                   "⭐️ Luxurious overwater bungalows and pristine beaches perfect for relaxation.\n" +
+                   "🏷️ Activity: BEACH | Budget: LUXURY | Best Season: ALL_YEAR | Family Friendly: Yes";
+        } else if (activity != null && activity.equals(CULTURAL)) {
+            return "Here are some cultural destinations for you:\n\n" +
+                   "📍 Kyoto, Japan\n" +
+                   "⭐️ Ancient temples, traditional gardens, and rich cultural heritage.\n" +
+                   "🏷️ Activity: CULTURAL | Budget: MODERATE | Best Season: SPRING | Family Friendly: Yes\n\n" +
+                   "📍 Rome, Italy\n" +
+                   "⭐️ Historic city with ancient ruins, art, and delicious cuisine.\n" +
+                   "🏷️ Activity: CULTURAL | Budget: MODERATE | Best Season: SPRING | Family Friendly: Yes\n\n" +
+                   "📍 Prague, Czech Republic\n" +
+                   "⭐️ Historic architecture, affordable dining, and rich cultural experiences.\n" +
+                   "🏷️ Activity: CULTURAL | Budget: BUDGET | Best Season: SPRING | Family Friendly: Yes";
+        } else if (budget != null && budget.equals(LUXURY)) {
+            return "Here are some luxury destinations for you:\n\n" +
+                   "📍 Maldives, Maldives\n" +
+                   "⭐️ Luxurious overwater bungalows and pristine beaches perfect for relaxation.\n" +
+                   "🏷️ Activity: BEACH | Budget: LUXURY | Best Season: ALL_YEAR | Family Friendly: Yes\n\n" +
+                   "📍 Santorini, Greece\n" +
+                   "⭐️ Beautiful sunsets, white-washed buildings, and Mediterranean cuisine.\n" +
+                   "🏷️ Activity: RELAXATION | Budget: LUXURY | Best Season: SUMMER | Family Friendly: Yes\n\n" +
+                   "📍 Aspen, USA\n" +
+                   "⭐️ World-class skiing, snowboarding, and luxurious alpine village.\n" +
+                   "🏷️ Activity: WINTER_SPORTS | Budget: LUXURY | Best Season: WINTER | Family Friendly: No";
+        } else if (season != null && season.equals(WINTER)) {
+            return "Here are some winter destinations for you:\n\n" +
+                   "📍 Aspen, USA\n" +
+                   "⭐️ World-class skiing, snowboarding, and luxurious alpine village.\n" +
+                   "🏷️ Activity: WINTER_SPORTS | Budget: LUXURY | Best Season: WINTER | Family Friendly: No\n\n" +
+                   "📍 Chamonix, France\n" +
+                   "⭐️ Epic skiing and snowboarding with stunning Mont Blanc views.\n" +
+                   "🏷️ Activity: WINTER_SPORTS | Budget: LUXURY | Best Season: WINTER | Family Friendly: Yes\n\n" +
+                   "📍 Cancun, Mexico\n" +
+                   "⭐️ White sandy beaches with crystal clear waters and vibrant nightlife.\n" +
+                   "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: WINTER | Family Friendly: Yes";
+        } else if (familyFriendly != null && familyFriendly) {
+            return "Here are some family-friendly destinations for you:\n\n" +
+                   "📍 Bali, Indonesia\n" +
+                   "⭐️ Beautiful beaches with vibrant culture and lush landscapes.\n" +
+                   "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: SUMMER | Family Friendly: Yes\n\n" +
+                   "📍 Cancun, Mexico\n" +
+                   "⭐️ White sandy beaches with crystal clear waters and vibrant nightlife.\n" +
+                   "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: WINTER | Family Friendly: Yes\n\n" +
+                   "📍 Kyoto, Japan\n" +
+                   "⭐️ Ancient temples, traditional gardens, and rich cultural heritage.\n" +
+                   "🏷️ Activity: CULTURAL | Budget: MODERATE | Best Season: SPRING | Family Friendly: Yes";
+        } else {
+            return "Here are some popular travel destinations:\n\n" +
+                   "📍 Bali, Indonesia\n" +
+                   "⭐️ Beautiful beaches with vibrant culture and lush landscapes.\n" +
+                   "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: SUMMER | Family Friendly: Yes\n\n" +
+                   "📍 Kyoto, Japan\n" +
+                   "⭐️ Ancient temples, traditional gardens, and rich cultural heritage.\n" +
+                   "🏷️ Activity: CULTURAL | Budget: MODERATE | Best Season: SPRING | Family Friendly: Yes\n\n" +
+                   "📍 New York City, USA\n" +
+                   "⭐️ Iconic skyline, diverse neighborhoods, world-class museums, and entertainment.\n" +
+                   "🏷️ Activity: URBAN_EXPLORATION | Budget: LUXURY | Best Season: ALL_YEAR | Family Friendly: Yes";
+        }
+    }
+}
+````
+
+## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/McpServerApplication.java
+````java
+package com.microsoft.mcp.sample.server;
+
+import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.ai.tool.method.MethodToolCallbackProvider;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+import com.microsoft.mcp.sample.server.service.DestinationService;
+
+@SpringBootApplication
+public class McpServerApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(McpServerApplication.class, args);
+	}
+	
+	@Bean
+	public ToolCallbackProvider destinationTools(DestinationService destinationService) {
+		return MethodToolCallbackProvider.builder().toolObjects(destinationService).build();
+	}
+
+}
+````
+
+## File: src/tools/destination-recommendation/src/main/resources/banner.txt
+````
+_____            _   _             _   _                 
+ |  __ \          | | (_)           | | (_)                
+ | |  | | ___  ___| |_ _ _ __   __ _| |_ _  ___  _ __  ___ 
+ | |  | |/ _ \/ __| __| | '_ \ / _` | __| |/ _ \| '_ \/ __|
+ | |__| |  __/\__ \ |_| | | | | (_| | |_| | (_) | | | \__ \
+ |_____/ \___||___/\__|_|_| |_|\__,_|\__|_|\___/|_| |_|___/
+                                                           
+ Recommendation Service v1.0
+ Spring AI MCP-enabled Travel Assistant
+````
+
+## File: src/tools/destination-recommendation/src/test/java/com/microsoft/mcp/sample/client/SampleClient.java
+````java
+package com.microsoft.mcp.sample.client;
+
+import java.util.Map;
+
+import io.modelcontextprotocol.client.McpClient;
+import io.modelcontextprotocol.spec.McpClientTransport;
+import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
+import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
+import io.modelcontextprotocol.spec.McpSchema.ListToolsResult;
+
+public class SampleClient {
+
+	private final McpClientTransport transport;
+
+	public SampleClient(McpClientTransport transport) {
+		this.transport = transport;
+	}
+
+	public void run() {
+
+		var client = McpClient.sync(this.transport).build();
+		client.initialize();
+
+		client.ping();
+
+		// List and demonstrate tools
+		ListToolsResult toolsList = client.listTools();
+		System.out.println("Available Tools = " + toolsList);
+		// Call the getDestinationsByBudget tool
+		CallToolResult destinationsResult = client.callTool(new CallToolRequest("getDestinationsByBudget", 
+				Map.of("budget", "MODERATE")));
+		System.out.println("Get Destinations By Budget Result: " + destinationsResult);
+
+		client.closeGracefully();
+	}
+}
+````
+
+## File: src/tools/destination-recommendation/.gitignore
+````
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs
+hs_err_pid*
+replay_pid*
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Spring Boot
+.spring-boot-devtools
+
+# Misc
+.DS_Store
+Thumbs.db
+````
+
+## File: src/tools/destination-recommendation/Dockerfile
+````
+# Build stage
+FROM maven:3.9.9-eclipse-temurin-24-noble AS build
+WORKDIR /app
+
+# Copy only the POM file first to cache dependencies
+COPY pom.xml ./
+# Download dependencies - this layer will be cached unless pom.xml changes
+RUN mvn dependency:go-offline
+
+# Now copy the source code (which changes more frequently)
+COPY src ./src/
+
+# Build the application
+RUN mvn clean package -DskipTests
+
+# Runtime stage
+FROM eclipse-temurin:24-jdk-alpine
+WORKDIR /app
+# Copy the built artifact from the build stage
+COPY --from=build /app/target/destination-server-0.0.1-SNAPSHOT.jar /app/application.jar
+# Expose the port your application runs on
+EXPOSE 8080
+# Run the application
+ENTRYPOINT ["java", "-jar", "/app/application.jar"]
+````
+
+## File: src/tools/destination-recommendation/pom.xml
+````xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.6</version>
+        <relativePath /> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>com.example</groupId>
+
+    <artifactId>destination-server</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>Destination Server</name>
+    <description>Sample Spring Boot application demonstrating MCP client and server usage</description>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-mcp-server-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>21</release>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+    </properties>
+
+    <repositories>
+        <repository>
+            <name>Central Portal Snapshots</name>
+            <id>central-portal-snapshots</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+</project>
+````
+
+## File: src/tools/itinerary-planning/src/app.py
+````python
+import uvicorn
+from starlette.applications import Starlette
+
+from app_routes import routes
+
+app = Starlette(
+    debug=True,
+    routes=routes,
+)
+
+
+def run():
+    """Start the Starlette server"""
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+if __name__ == "__main__":
+    run()
+````
+
+## File: src/tools/itinerary-planning/Dockerfile
+````
+FROM python:3.13-slim-bookworm
+
+# The installer requires curl (and certificates) to download the release archive
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
+
+# Download the latest installer
+ADD https://astral.sh/uv/install.sh /uv-installer.sh
+
+# Run the installer then remove it
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+
+# Ensure the installed binary is on the `PATH`
+ENV PATH="/root/.local/bin/:$PATH"
+
+
+# Copy the project into the image
+ADD . /app
+
+# Sync the project into a new environment, using the frozen lockfile
+WORKDIR /app
+RUN uv sync --frozen
+
+EXPOSE 8000
+
+CMD ["uv", "run", "start"]
+````
+
 ## File: src/tools/model-inference/Dockerfile
 ````
 # Use an ultra-lightweight base image
@@ -760,6 +1815,141 @@ FROM alpine:latest
 
 # Default command to print "Hello World"
 CMD ["echo", "Hello from web-search!"]
+````
+
+## File: infra/hooks/postprovision.ps1
+````powershell
+sh ./postprovision.sh
+````
+
+## File: infra/hooks/postprovision.sh
+````bash
+#!/bin/bash
+
+## This script is executed after the Azure Developer CLI (azd) provisioning step
+# It sets up the environment for the AI Travel Agents application, including creating .env files,
+# installing dependencies, and preparing the MCP tools.
+
+# Note: this script is executed at the root of the project directory
+
+echo "Running post-deployment script for AI Travel Agents application..."
+
+##########################################################################
+# API
+##########################################################################
+
+echo ">> Creating .env file for the API service..."
+if [ ! -f ./src/api/.env ]; then
+    echo "# File automatically generated on $(date)" > ./src/api/.env
+    echo "# See .env.sample for more information" >> ./src/api/.env
+    echo ""
+    AZURE_OPENAI_ENDPOINT=$(azd env get-value AZURE_OPENAI_ENDPOINT)
+    echo "AZURE_OPENAI_ENDPOINT=\"$AZURE_OPENAI_ENDPOINT\"" >> ./src/api/.env
+    echo ""
+    echo "LLM_PROVIDER=azure-openai" >> ./src/api/.env
+    echo ""
+    echo "AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini" >> ./src/api/.env
+    echo ""
+    echo "MCP_CUSTOMER_QUERY_URL=http://localhost:8080" >> ./src/api/.env
+    echo "MCP_DESTINATION_RECOMMENDATION_URL=http://localhost:5002" >> ./src/api/.env
+    echo "MCP_ITINERARY_PLANNING_URL=http://localhost:5003" >> ./src/api/.env
+    echo "MCP_CODE_EVALUATION_URL=http://localhost:5004" >> ./src/api/.env
+    echo "MCP_MODEL_INFERENCE_URL=http://localhost:5005" >> ./src/api/.env
+    echo "MCP_WEB_SEARCH_URL=http://localhost:5006" >> ./src/api/.env
+    echo "MCP_ECHO_PING_URL=http://localhost:5007" >> ./src/api/.env
+    echo "MCP_ECHO_PING_ACCESS_TOKEN=123-this-is-a-fake-token-please-use-a-token-provider" >> ./src/api/.env
+    echo ""
+    echo "OTEL_SERVICE_NAME=api" >> ./src/api/.env
+    echo "OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889" >> ./src/api/.env
+    echo "OTEL_EXPORTER_OTLP_HEADERS=header-value" >> ./src/api/.env
+fi
+
+# Set overrides for docker environment
+if [ ! -f ./src/api/.env.docker ]; then
+    echo "# File automatically generated on $(date)" > ./src/api/.env.docker
+    echo "# See .env.sample for more information" >> ./src/api/.env.docker
+    echo ""
+    echo "MCP_CUSTOMER_QUERY_URL=http://tool-customer-query:8080" >> ./src/api/.env.docker
+    echo "MCP_DESTINATION_RECOMMENDATION_URL=http://tool-destination-recommendation:5002" >> ./src/api/.env.docker
+    echo "MCP_ITINERARY_PLANNING_URL=http://tool-itinerary-planning:5003" >> ./src/api/.env.docker
+    echo "MCP_CODE_EVALUATION_URL=http://tool-code-evaluation:5004" >> ./src/api/.env.docker
+    echo "MCP_MODEL_INFERENCE_URL=http://tool-model-inference:5005" >> ./src/api/.env.docker
+    echo "MCP_WEB_SEARCH_URL=http://tool-web-search:5006" >> ./src/api/.env.docker
+    echo "MCP_ECHO_PING_URL=http://tool-echo-ping:5007" >> ./src/api/.env.docker
+fi
+
+# Install dependencies for the API service
+echo ">> Installing dependencies for the API service..."
+if [ ! -d ./src/api/node_modules ]; then
+    echo "Installing dependencies for the API service..."
+    npm ci --prefix=src/api --legacy-peer-deps 
+else
+    echo "Dependencies for the API service already installed."
+fi
+
+##########################################################################
+# UI
+##########################################################################
+
+echo ">> Creating .env file for the UI service..."
+if [ ! -f ./src/ui/.env ]; then
+    echo "# File automatically generated on $(date)" > ./src/ui/.env
+    echo "# See .env.sample for more information" >> ./src/ui/.env
+    echo ""
+    NG_API_URL=$(azd env get-value NG_API_URL)
+    echo "NG_API_URL=http://localhost:4000" >> ./src/ui/.env
+    echo ""
+    echo "# Uncomment the following line to use the provisioned endpoint for the API" >> ./src/ui/.env
+    echo "# NG_API_URL=\"$NG_API_URL\"" >> ./src/ui/.env
+fi
+
+# Install dependencies for the UI service
+echo ">> Installing dependencies for the UI service..."
+if [ ! -d ./src/ui/node_modules ]; then
+    echo "Installing dependencies for the UI service..."
+    npm ci --prefix=src/ui
+else
+    echo "Dependencies for the UI service already installed."
+fi
+
+##########################################################################
+# MCP Tools
+##########################################################################
+tools="echo-ping customer-query destination-recommendation itinerary-planning code-evaluation model-inference web-search"
+echo ">> Creating .env file for the MCP servers..."
+
+#  for each tool copy the .env.sample (if it exists) to .env and .env.docker (dont overwrite existing .env files)
+for tool in $tools; do
+    if [ -f ./src/tools/$tool/.env.sample ]; then
+        echo "Creating .env file for $tool..."
+        if [ ! -f ./src/tools/$tool/.env ]; then
+            cp ./src/tools/$tool/.env.sample ./src/tools/$tool/.env
+            echo "# File automatically generated on $(date)" >> ./src/tools/$tool/.env
+            echo "# See .env.sample for more information" >> ./src/tools/$tool/.env
+        fi
+
+        # Create .env.docker file if it doesn't exist
+        if [ ! -f ./src/tools/$tool/.env.docker ]; then
+            cp ./src/tools/$tool/.env.sample ./src/tools/$tool/.env.docker
+            echo "# File automatically generated on $(date)" >> ./src/tools/$tool/.env.docker
+            echo "# See .env.sample for more information" >> ./src/tools/$tool/.env.docker
+        fi
+
+        # Install dependencies for the tool service
+        echo ">> Installing dependencies for $tool service..."
+        if [ ! -d ./src/tools/$tool/node_modules ]; then
+            npm ci --prefix=./src/tools/$tool
+        else
+            echo "Dependencies for $tool service already installed."
+        fi
+    else
+        echo "No .env.sample found for $tool, skipping..."
+    fi
+done
+
+#  only build docker compose, do not start the containers yet
+echo ">> Building MCP servers with Docker Compose..."
+docker compose -f src/docker-compose.yml up --build -d $(echo $tools | sed 's/\([^ ]*\)/tool-\1/g')
 ````
 
 ## File: infra/modules/fetch-container-image.bicep
@@ -1506,802 +2696,22 @@ EXPOSE 8080
 ENTRYPOINT ["dotnet", "AITravelAgent.CustomerQueryServer.dll"]
 ````
 
-## File: src/tools/destination-recommendation/.mvn/wrapper/maven-wrapper.properties
-````
-distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.6/apache-maven-3.9.6-bin.zip
-wrapperUrl=https://repo.maven.apache.org/maven2/io/takari/maven-wrapper/0.5.6/maven-wrapper-0.5.6.jar
-````
-
-## File: src/tools/destination-recommendation/.mvn/wrapper/MavenWrapperDownloader.java
+## File: src/tools/destination-recommendation/src/test/java/com/microsoft/mcp/sample/client/ClientSse.java
 ````java
-/*
- * Copyright 2007-present the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-import java.net.*;
-import java.io.*;
-import java.nio.channels.*;
-import java.util.Properties;
+package com.microsoft.mcp.sample.client;
 
-public class MavenWrapperDownloader {
+import io.modelcontextprotocol.client.transport.WebFluxSseClientTransport;
 
-    private static final String WRAPPER_VERSION = "0.5.6";
-    /**
-     * Default URL to download the maven-wrapper.jar from, if no 'downloadUrl' is provided.
-     */
-    private static final String DEFAULT_DOWNLOAD_URL = "https://repo.maven.apache.org/maven2/io/takari/maven-wrapper/"
-        + WRAPPER_VERSION + "/maven-wrapper-" + WRAPPER_VERSION + ".jar";
+import org.springframework.web.reactive.function.client.WebClient;
 
-    /**
-     * Path to the maven-wrapper.properties file, which might contain a downloadUrl property to
-     * use instead of the default one.
-     */
-    private static final String MAVEN_WRAPPER_PROPERTIES_PATH =
-            ".mvn/wrapper/maven-wrapper.properties";
+public class ClientSse {
 
-    /**
-     * Path where the maven-wrapper.jar will be saved to.
-     */
-    private static final String MAVEN_WRAPPER_JAR_PATH =
-            ".mvn/wrapper/maven-wrapper.jar";
-
-    /**
-     * Name of the property which should be used to override the default download url for the wrapper.
-     */
-    private static final String PROPERTY_NAME_WRAPPER_URL = "wrapperUrl";
-
-    public static void main(String args[]) {
-        System.out.println("- Downloader started");
-        File baseDirectory = new File(args[0]);
-        System.out.println("- Using base directory: " + baseDirectory.getAbsolutePath());
-
-        // If the maven-wrapper.properties exists, read it and check if it contains a custom
-        // wrapperUrl parameter.
-        File mavenWrapperPropertyFile = new File(baseDirectory, MAVEN_WRAPPER_PROPERTIES_PATH);
-        String url = DEFAULT_DOWNLOAD_URL;
-        if(mavenWrapperPropertyFile.exists()) {
-            FileInputStream mavenWrapperPropertyFileInputStream = null;
-            try {
-                mavenWrapperPropertyFileInputStream = new FileInputStream(mavenWrapperPropertyFile);
-                Properties mavenWrapperProperties = new Properties();
-                mavenWrapperProperties.load(mavenWrapperPropertyFileInputStream);
-                url = mavenWrapperProperties.getProperty(PROPERTY_NAME_WRAPPER_URL, url);
-            } catch (IOException e) {
-                System.out.println("- ERROR loading '" + MAVEN_WRAPPER_PROPERTIES_PATH + "'");
-            } finally {
-                try {
-                    if(mavenWrapperPropertyFileInputStream != null) {
-                        mavenWrapperPropertyFileInputStream.close();
-                    }
-                } catch (IOException e) {
-                    // Ignore ...
-                }
-            }
-        }
-        System.out.println("- Downloading from: " + url);
-
-        File outputFile = new File(baseDirectory.getAbsolutePath(), MAVEN_WRAPPER_JAR_PATH);
-        if(!outputFile.getParentFile().exists()) {
-            if(!outputFile.getParentFile().mkdirs()) {
-                System.out.println(
-                        "- ERROR creating output directory '" + outputFile.getParentFile().getAbsolutePath() + "'");
-            }
-        }
-        System.out.println("- Downloading to: " + outputFile.getAbsolutePath());
-        try {
-            downloadFileFromURL(url, outputFile);
-            System.out.println("Done");
-            System.exit(0);
-        } catch (Throwable e) {
-            System.out.println("- Error downloading");
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
-
-    private static void downloadFileFromURL(String urlString, File destination) throws Exception {
-        if (System.getenv("MVNW_USERNAME") != null && System.getenv("MVNW_PASSWORD") != null) {
-            String username = System.getenv("MVNW_USERNAME");
-            char[] password = System.getenv("MVNW_PASSWORD").toCharArray();
-            Authenticator.setDefault(new Authenticator() {
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(username, password);
-                }
-            });
-        }
-        URL website = new URL(urlString);
-        ReadableByteChannel rbc;
-        rbc = Channels.newChannel(website.openStream());
-        FileOutputStream fos = new FileOutputStream(destination);
-        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-        fos.close();
-        rbc.close();
-    }
+	public static void main(String[] args) {
+		var transport = new WebFluxSseClientTransport(WebClient.builder().baseUrl("http://localhost:5002"));
+		new SampleClient(transport).run();
+	}
 
 }
-````
-
-## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/config/StartupConfig.java
-````java
-package com.microsoft.mcp.sample.server.config;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-/**
- * Configuration class that displays welcome and usage information at application startup.
- */
-@Configuration
-public class StartupConfig {
-
-    @Value("${destination.service.welcome:Welcome to the Destination Recommendation Service!}")
-    private String welcomeMessage;
-    
-    @Value("${destination.service.usage:}")
-    private String usageMessage;
-    
-    /**
-     * Display startup information when the application launches.
-     */
-    @Bean
-    public CommandLineRunner startupInfo() {
-        return args -> {
-            System.out.println("\n" + "=".repeat(80));
-            System.out.println(welcomeMessage);
-            System.out.println("=".repeat(80));
-            
-            if (usageMessage != null && !usageMessage.isEmpty()) {
-                System.out.println("\nUsage Information:");
-                System.out.println(usageMessage);
-                System.out.println("\nEndpoint: http://localhost:8080/v1/tools");
-                System.out.println("\nSee the README.md for more information on how to use the service.");
-            }
-            
-            System.out.println("\nThe destination recommendation service is now ready to accept requests!");
-            System.out.println("=".repeat(80) + "\n");
-        };
-    }
-}
-````
-
-## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/controller/HealthController.java
-````java
-package com.microsoft.mcp.sample.server.controller;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.microsoft.mcp.sample.server.service.DestinationService;
-
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * Controller for health check and information endpoints.
- */
-@RestController
-public class HealthController {
-    
-    private final DestinationService destinationService;
-    
-    @Autowired
-    public HealthController(DestinationService destinationService) {
-        this.destinationService = destinationService;
-    }    /**
-     * Simple health check endpoint.
-     * 
-     * @return Health status information
-     */
-    @GetMapping("/health")
-    public ResponseEntity<Map<String, Object>> healthCheck() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "UP");
-        response.put("timestamp", LocalDateTime.now().toString());
-        response.put("service", "Destination Recommendation Service");
-        
-        return ResponseEntity.ok(response);
-    }
-    
-    /**
-     * Information endpoint about the service.
-     * 
-     * @return Service information
-     */
-    @GetMapping("/info")
-    public ResponseEntity<Map<String, Object>> serviceInfo() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("service", "Destination Recommendation Service");
-        response.put("version", "1.0.0");
-        response.put("endpoint", "/v1/tools");
-        
-        Map<String, String> tools = new HashMap<>();
-        tools.put("getDestinationsByActivity", "Get destinations by activity type (BEACH, ADVENTURE, etc.)");
-        tools.put("getDestinationsByBudget", "Get destinations by budget (BUDGET, MODERATE, LUXURY)");
-        tools.put("getDestinationsBySeason", "Get destinations by season (SPRING, SUMMER, etc.)");
-        tools.put("getDestinationsByPreferences", "Get destinations matching multiple criteria");
-        tools.put("getAllDestinations", "Get all available destinations");
-        response.put("availableTools", tools);
-        
-        return ResponseEntity.ok(response);
-    }
-}
-````
-
-## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/exception/GlobalExceptionHandler.java
-````java
-package com.microsoft.mcp.sample.server.exception;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-/**
- * Global exception handler for the destination recommendation service.
- */
-@RestControllerAdvice
-public class GlobalExceptionHandler {
-
-    /**
-     * Handle IllegalArgumentException which occurs when invalid input is provided.
-     * 
-     * @param ex The exception that was thrown
-     * @return A response with error details
-     */
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
-        ErrorResponse error = new ErrorResponse(
-            "Invalid_Input", 
-            "Invalid input parameter: " + ex.getMessage(),
-            "Please check your input values and try again.");
-        
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     * Handle generic exceptions that are not specifically handled elsewhere.
-     * 
-     * @param ex The exception that was thrown
-     * @return A response with error details
-     */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        ErrorResponse error = new ErrorResponse(
-            "Internal_Error", 
-            "An unexpected error occurred: " + ex.getMessage(),
-            "Please try again later or contact support if the issue persists.");
-        
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    /**
-     * Simple error response class for consistent error reporting.
-     */
-    public static class ErrorResponse {
-        private String code;
-        private String message;
-        private String resolution;
-
-        public ErrorResponse(String code, String message, String resolution) {
-            this.code = code;
-            this.message = message;
-            this.resolution = resolution;
-        }
-
-        public String getCode() {
-            return code;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public String getResolution() {
-            return resolution;
-        }
-    }
-}
-````
-
-## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/model/ActivityType.java
-````java
-package com.microsoft.mcp.sample.server.model;
-
-/**
- * Enum representing different types of activities available at destinations.
- */
-public enum ActivityType {
-    BEACH,
-    ADVENTURE,
-    CULTURAL,
-    RELAXATION,
-    URBAN_EXPLORATION,
-    NATURE,
-    WINTER_SPORTS
-}
-````
-
-## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/model/BudgetCategory.java
-````java
-package com.microsoft.mcp.sample.server.model;
-
-/**
- * Enum representing budget categories for destinations.
- */
-public enum BudgetCategory {
-    BUDGET,
-    MODERATE,
-    LUXURY
-}
-````
-
-## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/model/PreferenceRequest.java
-````java
-package com.microsoft.mcp.sample.server.model;
-
-/**
- * Class representing user preferences for destination recommendations.
- * Using String types instead of enum references to avoid compilation issues.
- */
-public class PreferenceRequest {
-    private String preferredActivity;  // Changed from ActivityType to String
-    private String budgetCategory;     // Changed from BudgetCategory to String
-    private String preferredSeason;    // Changed from Season to String
-    private Boolean familyFriendly;
-    private Integer numberOfDestinations;
-
-    // Default constructor
-    public PreferenceRequest() {
-        this.numberOfDestinations = 3; // Default to returning 3 destinations
-    }
-
-    // Constructor
-    public PreferenceRequest(String preferredActivity, String budgetCategory, 
-                          String preferredSeason, Boolean familyFriendly, Integer numberOfDestinations) {
-        this.preferredActivity = preferredActivity;
-        this.budgetCategory = budgetCategory;
-        this.preferredSeason = preferredSeason;
-        this.familyFriendly = familyFriendly;
-        this.numberOfDestinations = numberOfDestinations != null ? numberOfDestinations : 3;
-    }
-
-    // Getters and setters
-    public String getPreferredActivity() {
-        return preferredActivity;
-    }
-
-    public void setPreferredActivity(String preferredActivity) {
-        this.preferredActivity = preferredActivity;
-    }
-
-    public String getBudgetCategory() {
-        return budgetCategory;
-    }
-
-    public void setBudgetCategory(String budgetCategory) {
-        this.budgetCategory = budgetCategory;
-    }
-
-    public String getPreferredSeason() {
-        return preferredSeason;
-    }
-
-    public void setPreferredSeason(String preferredSeason) {
-        this.preferredSeason = preferredSeason;
-    }
-
-    public Boolean getFamilyFriendly() {
-        return familyFriendly;
-    }
-
-    public void setFamilyFriendly(Boolean familyFriendly) {
-        this.familyFriendly = familyFriendly;
-    }
-
-    public Integer getNumberOfDestinations() {
-        return numberOfDestinations;
-    }
-
-    public void setNumberOfDestinations(Integer numberOfDestinations) {
-        this.numberOfDestinations = numberOfDestinations != null ? numberOfDestinations : 3;
-    }
-}
-````
-
-## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/model/Season.java
-````java
-package com.microsoft.mcp.sample.server.model;
-
-/**
- * Enum representing seasons when destinations are best to visit.
- */
-public enum Season {
-    SPRING,
-    SUMMER,
-    AUTUMN,
-    WINTER,
-    ALL_YEAR
-}
-````
-
-## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/service/DestinationService.java
-````java
-package com.microsoft.mcp.sample.server.service;
-
-import org.springframework.ai.tool.annotation.Tool;
-import org.springframework.stereotype.Service;
-
-/**
- * Service for providing travel destination recommendations.
- */
-@Service
-public class DestinationService {
-
-    // Constants for activity types
-    public static final String BEACH = "BEACH";
-    public static final String ADVENTURE = "ADVENTURE";
-    public static final String CULTURAL = "CULTURAL";
-    public static final String RELAXATION = "RELAXATION";
-    public static final String URBAN_EXPLORATION = "URBAN_EXPLORATION";
-    public static final String NATURE = "NATURE";
-    public static final String WINTER_SPORTS = "WINTER_SPORTS";
-    
-    // Constants for budget categories
-    public static final String BUDGET = "BUDGET";
-    public static final String MODERATE = "MODERATE";
-    public static final String LUXURY = "LUXURY";
-    
-    // Constants for seasons
-    public static final String SPRING = "SPRING";
-    public static final String SUMMER = "SUMMER";
-    public static final String AUTUMN = "AUTUMN";
-    public static final String WINTER = "WINTER";
-    public static final String ALL_YEAR = "ALL_YEAR";
-
-    /**
-     * Echo back the input message
-     * @param message The message to echo
-     * @return The original message
-     */
-    @Tool(description = "Echo back the input message exactly as received")
-    public String echoMessage(String message) {
-        return message;
-    }
-
-    /**
-     * Recommend destinations based on activity type
-     * @param activityType The preferred activity type (BEACH, ADVENTURE, CULTURAL, RELAXATION, URBAN_EXPLORATION, NATURE, WINTER_SPORTS)
-     * @return A list of recommended destinations
-     */
-    @Tool(description = "Get travel destination recommendations based on preferred activity type")
-    public String getDestinationsByActivity(String activityType) {
-        try {
-            String activity = activityType.toUpperCase();
-            // Validate activity type
-            if (!isValidActivityType(activity)) {
-                return "Invalid activity type. Please use one of: BEACH, ADVENTURE, CULTURAL, RELAXATION, URBAN_EXPLORATION, NATURE, WINTER_SPORTS";
-            }
-            
-            return getDestinationsByPreference(activity, null, null, null);
-        } catch (Exception e) {
-            return "Invalid activity type. Please use one of: BEACH, ADVENTURE, CULTURAL, RELAXATION, URBAN_EXPLORATION, NATURE, WINTER_SPORTS";
-        }
-    }
-    
-    // Helper method to validate activity types
-    private boolean isValidActivityType(String activityType) {
-        return activityType.equals(BEACH) ||
-               activityType.equals(ADVENTURE) ||
-               activityType.equals(CULTURAL) ||
-               activityType.equals(RELAXATION) ||
-               activityType.equals(URBAN_EXPLORATION) ||
-               activityType.equals(NATURE) ||
-               activityType.equals(WINTER_SPORTS);
-    }
-
-    /**
-     * Recommend destinations based on budget category
-     * @param budget The budget category (BUDGET, MODERATE, LUXURY)
-     * @return A list of recommended destinations
-     */
-    @Tool(description = "Get travel destination recommendations based on budget category")
-    public String getDestinationsByBudget(String budget) {
-        try {
-            String budgetCategory = budget.toUpperCase();
-            // Validate budget category
-            if (!isValidBudgetCategory(budgetCategory)) {
-                return "Invalid budget category. Please use one of: BUDGET, MODERATE, LUXURY";
-            }
-            
-            return getDestinationsByPreference(null, budgetCategory, null, null);
-        } catch (Exception e) {
-            return "Invalid budget category. Please use one of: BUDGET, MODERATE, LUXURY";
-        }
-    }
-    
-    // Helper method to validate budget categories
-    private boolean isValidBudgetCategory(String budgetCategory) {
-        return budgetCategory.equals(BUDGET) ||
-               budgetCategory.equals(MODERATE) ||
-               budgetCategory.equals(LUXURY);
-    }
-
-    /**
-     * Recommend destinations based on season
-     * @param season The preferred season (SPRING, SUMMER, AUTUMN, WINTER, ALL_YEAR)
-     * @return A list of recommended destinations
-     */
-    @Tool(description = "Get travel destination recommendations based on preferred season")
-    public String getDestinationsBySeason(String season) {
-        try {
-            String preferredSeason = season.toUpperCase();
-            // Validate season
-            if (!isValidSeason(preferredSeason)) {
-                return "Invalid season. Please use one of: SPRING, SUMMER, AUTUMN, WINTER, ALL_YEAR";
-            }
-            
-            return getDestinationsByPreference(null, null, preferredSeason, null);
-        } catch (Exception e) {
-            return "Invalid season. Please use one of: SPRING, SUMMER, AUTUMN, WINTER, ALL_YEAR";
-        }
-    }
-    
-    // Helper method to validate seasons
-    private boolean isValidSeason(String season) {
-        return season.equals(SPRING) ||
-               season.equals(SUMMER) ||
-               season.equals(AUTUMN) ||
-               season.equals(WINTER) ||
-               season.equals(ALL_YEAR);
-    }
-
-    /**
-     * Recommend destinations based on multiple preferences
-     * @param activity The preferred activity type
-     * @param budget The budget category
-     * @param season The preferred season
-     * @param familyFriendly Whether the destination needs to be family-friendly
-     * @return A list of recommended destinations
-     */
-    @Tool(description = "Get travel destination recommendations based on multiple criteria")
-    public String getDestinationsByPreferences(String activity, String budget, String season, Boolean familyFriendly) {
-        try {
-            // Set preferences if provided
-            if (activity != null && !activity.isEmpty()) {
-                String activityUpper = activity.toUpperCase();
-                if (!isValidActivityType(activityUpper)) {
-                    return "Invalid activity type. Please use one of: BEACH, ADVENTURE, CULTURAL, RELAXATION, URBAN_EXPLORATION, NATURE, WINTER_SPORTS";
-                }
-            }
-            
-            if (budget != null && !budget.isEmpty()) {
-                String budgetUpper = budget.toUpperCase();
-                if (!isValidBudgetCategory(budgetUpper)) {
-                    return "Invalid budget category. Please use one of: BUDGET, MODERATE, LUXURY";
-                }
-            }
-            
-            if (season != null && !season.isEmpty()) {
-                String seasonUpper = season.toUpperCase();
-                if (!isValidSeason(seasonUpper)) {
-                    return "Invalid season. Please use one of: SPRING, SUMMER, AUTUMN, WINTER, ALL_YEAR";
-                }
-            }
-            
-            return getDestinationsByPreference(activity, budget, season, familyFriendly);
-        } catch (Exception e) {
-            return "Invalid input. Please check your parameters and try again.\n" + 
-                   "Activity types: BEACH, ADVENTURE, CULTURAL, RELAXATION, URBAN_EXPLORATION, NATURE, WINTER_SPORTS\n" +
-                   "Budget categories: BUDGET, MODERATE, LUXURY\n" +
-                   "Seasons: SPRING, SUMMER, AUTUMN, WINTER, ALL_YEAR";
-        }
-    }
-    
-    /**
-     * Get all available destinations
-     * @return A list of all destinations
-     */
-    @Tool(description = "Get a list of all available travel destinations")
-    public String getAllDestinations() {
-        return "Here are some popular travel destinations:\n\n" +
-               "📍 Bali, Indonesia\n" +
-               "⭐️ Beautiful beaches with vibrant culture and lush landscapes.\n" +
-               "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: SUMMER | Family Friendly: Yes\n\n" +
-               "📍 Cancun, Mexico\n" +
-               "⭐️ White sandy beaches with crystal clear waters and vibrant nightlife.\n" +
-               "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: WINTER | Family Friendly: Yes\n\n" +
-               "📍 Maldives, Maldives\n" +
-               "⭐️ Luxurious overwater bungalows and pristine beaches perfect for relaxation.\n" +
-               "🏷️ Activity: BEACH | Budget: LUXURY | Best Season: ALL_YEAR | Family Friendly: Yes";
-    }
-    
-    /**
-     * Helper method to get destinations based on preference
-     */
-    private String getDestinationsByPreference(String activity, String budget, String season, Boolean familyFriendly) {
-        // We'll return some hardcoded results based on the preferences
-        if (activity != null && activity.equals(BEACH)) {
-            return "Here are some beach destinations for you:\n\n" +
-                   "📍 Bali, Indonesia\n" +
-                   "⭐️ Beautiful beaches with vibrant culture and lush landscapes.\n" +
-                   "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: SUMMER | Family Friendly: Yes\n\n" +
-                   "📍 Cancun, Mexico\n" +
-                   "⭐️ White sandy beaches with crystal clear waters and vibrant nightlife.\n" +
-                   "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: WINTER | Family Friendly: Yes\n\n" +
-                   "📍 Maldives, Maldives\n" +
-                   "⭐️ Luxurious overwater bungalows and pristine beaches perfect for relaxation.\n" +
-                   "🏷️ Activity: BEACH | Budget: LUXURY | Best Season: ALL_YEAR | Family Friendly: Yes";
-        } else if (activity != null && activity.equals(CULTURAL)) {
-            return "Here are some cultural destinations for you:\n\n" +
-                   "📍 Kyoto, Japan\n" +
-                   "⭐️ Ancient temples, traditional gardens, and rich cultural heritage.\n" +
-                   "🏷️ Activity: CULTURAL | Budget: MODERATE | Best Season: SPRING | Family Friendly: Yes\n\n" +
-                   "📍 Rome, Italy\n" +
-                   "⭐️ Historic city with ancient ruins, art, and delicious cuisine.\n" +
-                   "🏷️ Activity: CULTURAL | Budget: MODERATE | Best Season: SPRING | Family Friendly: Yes\n\n" +
-                   "📍 Prague, Czech Republic\n" +
-                   "⭐️ Historic architecture, affordable dining, and rich cultural experiences.\n" +
-                   "🏷️ Activity: CULTURAL | Budget: BUDGET | Best Season: SPRING | Family Friendly: Yes";
-        } else if (budget != null && budget.equals(LUXURY)) {
-            return "Here are some luxury destinations for you:\n\n" +
-                   "📍 Maldives, Maldives\n" +
-                   "⭐️ Luxurious overwater bungalows and pristine beaches perfect for relaxation.\n" +
-                   "🏷️ Activity: BEACH | Budget: LUXURY | Best Season: ALL_YEAR | Family Friendly: Yes\n\n" +
-                   "📍 Santorini, Greece\n" +
-                   "⭐️ Beautiful sunsets, white-washed buildings, and Mediterranean cuisine.\n" +
-                   "🏷️ Activity: RELAXATION | Budget: LUXURY | Best Season: SUMMER | Family Friendly: Yes\n\n" +
-                   "📍 Aspen, USA\n" +
-                   "⭐️ World-class skiing, snowboarding, and luxurious alpine village.\n" +
-                   "🏷️ Activity: WINTER_SPORTS | Budget: LUXURY | Best Season: WINTER | Family Friendly: No";
-        } else if (season != null && season.equals(WINTER)) {
-            return "Here are some winter destinations for you:\n\n" +
-                   "📍 Aspen, USA\n" +
-                   "⭐️ World-class skiing, snowboarding, and luxurious alpine village.\n" +
-                   "🏷️ Activity: WINTER_SPORTS | Budget: LUXURY | Best Season: WINTER | Family Friendly: No\n\n" +
-                   "📍 Chamonix, France\n" +
-                   "⭐️ Epic skiing and snowboarding with stunning Mont Blanc views.\n" +
-                   "🏷️ Activity: WINTER_SPORTS | Budget: LUXURY | Best Season: WINTER | Family Friendly: Yes\n\n" +
-                   "📍 Cancun, Mexico\n" +
-                   "⭐️ White sandy beaches with crystal clear waters and vibrant nightlife.\n" +
-                   "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: WINTER | Family Friendly: Yes";
-        } else if (familyFriendly != null && familyFriendly) {
-            return "Here are some family-friendly destinations for you:\n\n" +
-                   "📍 Bali, Indonesia\n" +
-                   "⭐️ Beautiful beaches with vibrant culture and lush landscapes.\n" +
-                   "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: SUMMER | Family Friendly: Yes\n\n" +
-                   "📍 Cancun, Mexico\n" +
-                   "⭐️ White sandy beaches with crystal clear waters and vibrant nightlife.\n" +
-                   "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: WINTER | Family Friendly: Yes\n\n" +
-                   "📍 Kyoto, Japan\n" +
-                   "⭐️ Ancient temples, traditional gardens, and rich cultural heritage.\n" +
-                   "🏷️ Activity: CULTURAL | Budget: MODERATE | Best Season: SPRING | Family Friendly: Yes";
-        } else {
-            return "Here are some popular travel destinations:\n\n" +
-                   "📍 Bali, Indonesia\n" +
-                   "⭐️ Beautiful beaches with vibrant culture and lush landscapes.\n" +
-                   "🏷️ Activity: BEACH | Budget: MODERATE | Best Season: SUMMER | Family Friendly: Yes\n\n" +
-                   "📍 Kyoto, Japan\n" +
-                   "⭐️ Ancient temples, traditional gardens, and rich cultural heritage.\n" +
-                   "🏷️ Activity: CULTURAL | Budget: MODERATE | Best Season: SPRING | Family Friendly: Yes\n\n" +
-                   "📍 New York City, USA\n" +
-                   "⭐️ Iconic skyline, diverse neighborhoods, world-class museums, and entertainment.\n" +
-                   "🏷️ Activity: URBAN_EXPLORATION | Budget: LUXURY | Best Season: ALL_YEAR | Family Friendly: Yes";
-        }
-    }
-}
-````
-
-## File: src/tools/destination-recommendation/src/main/resources/banner.txt
-````
-_____            _   _             _   _                 
- |  __ \          | | (_)           | | (_)                
- | |  | | ___  ___| |_ _ _ __   __ _| |_ _  ___  _ __  ___ 
- | |  | |/ _ \/ __| __| | '_ \ / _` | __| |/ _ \| '_ \/ __|
- | |__| |  __/\__ \ |_| | | | | (_| | |_| | (_) | | | \__ \
- |_____/ \___||___/\__|_|_| |_|\__,_|\__|_|\___/|_| |_|___/
-                                                           
- Recommendation Service v1.0
- Spring AI MCP-enabled Travel Assistant
-````
-
-## File: src/tools/destination-recommendation/.gitignore
-````
-# Compiled class files
-*.class
-
-# Log files
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs
-hs_err_pid*
-replay_pid*
-
-# Maven
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
-
-# Gradle
-.gradle/
-build/
-!gradle/wrapper/gradle-wrapper.jar
-
-# IntelliJ IDEA
-.idea/
-*.iws
-*.iml
-*.ipr
-out/
-
-# Eclipse
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-
-# NetBeans
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-# VS Code
-.vscode/
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# Spring Boot
-.spring-boot-devtools
-
-# Misc
-.DS_Store
-Thumbs.db
 ````
 
 ## File: src/tools/echo-ping/src/instrumentation.ts
@@ -2605,55 +3015,419 @@ export const EchoTools = [
 ];
 ````
 
-## File: src/tools/itinerary-planning/src/app.py
+## File: src/tools/itinerary-planning/src/app_routes.py
 ````python
-import uvicorn
-from starlette.applications import Starlette
+from mcp.server.sse import SseServerTransport
+from starlette.responses import HTMLResponse
+from starlette.routing import Mount, Route
 
-from app_routes import routes
+from mcp_server import mcp
 
-app = Starlette(
-    debug=True,
-    routes=routes,
-)
+# Create SSE transport
+sse = SseServerTransport("/messages/")
 
 
-def run():
-    """Start the Starlette server"""
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+# MCP SSE handler function
+async def handle_sse(request):
+    async with sse.connect_sse(request.scope, request.receive, request._send) as (
+        read_stream,
+        write_stream,
+    ):
+        await mcp._mcp_server.run(read_stream, write_stream, mcp._mcp_server.create_initialization_options())
+
+
+# Not strictly necessary
+async def homepage(request):
+    return HTMLResponse("Itinerary planning MCP server")
+
+
+routes = [
+    Route("/", endpoint=homepage),
+    # MCP related routes
+    Route("/sse", endpoint=handle_sse),
+    Mount("/messages/", app=sse.handle_post_message),
+]
+````
+
+## File: src/tools/itinerary-planning/src/mcp_server.py
+````python
+import random
+import re
+import uuid
+from datetime import datetime, timedelta
+from typing import Annotated
+
+from faker import Faker
+from mcp.server.fastmcp import FastMCP
+from pydantic import Field
+
+mcp = FastMCP("weather")
+fake = Faker()
+
+
+def validate_iso_date(date_str: str, param_name: str) -> datetime.date:
+    """
+    Validates that a string is in ISO format (YYYY-MM-DD) and returns the parsed date.
+
+    Args:
+        date_str: The date string to validate
+        param_name: Name of the parameter for error messages
+
+    Returns:
+        The parsed date object
+
+    Raises:
+        ValueError: If the date is not in ISO format or is invalid
+    """
+    iso_pattern = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    if not iso_pattern.match(date_str):
+        raise ValueError(f"{param_name} must be in ISO format (YYYY-MM-DD), got: {date_str}")
+
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError as e:
+        raise ValueError(f"Invalid {param_name}: {e}")
+
+
+@mcp.tool()
+async def suggest_hotels(
+    location: Annotated[str, Field(description="Location (city or area) to search for hotels")],
+    check_in: Annotated[str, Field(description="Check-in date in ISO format (YYYY-MM-DD)")],
+    check_out: Annotated[str, Field(description="Check-out date in ISO format (YYYY-MM-DD)")],
+) -> str:
+    """
+    Suggest hotels based on location and dates.
+    """
+    # Validate dates
+    check_in_date = validate_iso_date(check_in, "check_in")
+    check_out_date = validate_iso_date(check_out, "check_out")
+
+    # Ensure check_out is after check_in
+    if check_out_date <= check_in_date:
+        raise ValueError("check_out date must be after check_in date")
+
+    # Create realistic mock data for hotels
+    hotel_types = ["Luxury", "Boutique", "Budget", "Business"]
+    amenities = ["Free WiFi", "Pool", "Spa", "Gym", "Restaurant", "Bar", "Room Service", "Parking"]
+
+    # Generate a rating between 3.0 and 5.0
+    def generate_rating():
+        return round(random.uniform(3.0, 5.0), 1)
+
+    # Generate a price based on hotel type
+    def generate_price(hotel_type):
+        price_ranges = {
+            "Luxury": (250, 600),
+            "Boutique": (180, 350),
+            "Budget": (80, 150),
+            "Resort": (200, 500),
+            "Business": (150, 300),
+        }
+        min_price, max_price = price_ranges.get(hotel_type, (100, 300))
+        return round(random.uniform(min_price, max_price))
+
+    # Generate between 3 and 8 hotels
+    num_hotels = random.randint(3, 8)
+    hotels = []
+
+    neighborhoods = [
+        "Downtown",
+        "Historic District",
+        "Waterfront",
+        "Business District",
+        "Arts District",
+        "University Area",
+    ]
+
+    for i in range(num_hotels):
+        hotel_type = random.choice(hotel_types)
+        hotel_amenities = random.sample(amenities, random.randint(3, 6))
+        neighborhood = random.choice(neighborhoods)
+
+        hotel = {
+            "name": f"{hotel_type} {['Hotel', 'Inn', 'Suites', 'Resort', 'Plaza'][random.randint(0, 4)]}",
+            "address": fake.street_address(),
+            "location": f"{neighborhood}, {location}",
+            "rating": generate_rating(),
+            "price_per_night": generate_price(hotel_type),
+            "hotel_type": hotel_type,
+            "amenities": hotel_amenities,
+            "available_rooms": random.randint(1, 15),
+        }
+        hotels.append(hotel)
+
+    # Sort by rating to show best hotels first
+    hotels.sort(key=lambda x: x["rating"], reverse=True)
+    return hotels
+
+
+@mcp.tool()
+async def suggest_flights(
+    from_location: Annotated[str, Field(description="Departure location (city or airport)")],
+    to_location: Annotated[str, Field(description="Destination location (city or airport)")],
+    departure_date: Annotated[str, Field(description="Departure date in ISO format (YYYY-MM-DD)")],
+    return_date: Annotated[str | None, Field(description="Return date in ISO format (YYYY-MM-DD)")] = None,
+) -> str:
+    """
+    Suggest flights based on locations and dates.
+    """
+    # Validate dates
+    dep_date = validate_iso_date(departure_date, "departure_date")
+    ret_date = None
+    if return_date:
+        ret_date = validate_iso_date(return_date, "return_date")
+        # Ensure return date is after departure date
+        if ret_date <= dep_date:
+            raise ValueError("return_date must be after departure_date")
+
+    # Create realistic mock data for flights
+    airlines = [
+        "SkyWings",
+        "Global Air",
+        "Atlantic Airways",
+        "Pacific Express",
+        "Mountain Jets",
+        "Stellar Airlines",
+        "Sunshine Airways",
+        "Northern Flights",
+    ]
+
+    aircraft_types = ["Boeing 737", "Airbus A320", "Boeing 787", "Airbus A350", "Embraer E190", "Bombardier CRJ900"]
+
+    # Generate airport codes based on locations
+    def generate_airport_code(city):
+        # Simple simulation of airport codes
+        # In reality, this would use a database of real airport codes
+        vowels = "AEIOU"
+        consonants = "BCDFGHJKLMNPQRSTVWXYZ"
+
+        # Use first letter of city if possible
+        first_char = city[0].upper()
+        if first_char in consonants:
+            code = first_char
+        else:
+            code = random.choice(consonants)
+
+        # Add two random letters, preferring consonants
+        for _ in range(2):
+            if random.random() < 0.7:  # 70% chance of consonant
+                code += random.choice(consonants)
+            else:
+                code += random.choice(vowels)
+
+        return code
+
+    from_code = generate_airport_code(from_location)
+    to_code = generate_airport_code(to_location)
+
+    # Generate departure flights
+    departure_flights = []
+    num_dep_flights = random.randint(3, 7)
+
+    for _ in range(num_dep_flights):
+        # Generate departure time (between 6 AM and 10 PM)
+        hour = random.randint(6, 22)
+        minute = random.choice([0, 15, 30, 45])
+        # Convert date to datetime before setting hour and minute
+        dep_time = datetime.combine(dep_date, datetime.min.time()).replace(hour=hour, minute=minute)
+
+        # Flight duration between 1 and 8 hours
+        flight_minutes = random.randint(60, 480)
+        arr_time = dep_time + timedelta(minutes=flight_minutes)
+
+        # Determine if this is a direct or connecting flight
+        is_direct = random.random() < 0.6  # 60% chance of direct flight
+
+        flight = {
+            "flight_id": str(uuid.uuid4())[:8].upper(),
+            "airline": random.choice(airlines),
+            "flight_number": f"{random.choice('ABCDEFG')}{random.randint(100, 9999)}",
+            "aircraft": random.choice(aircraft_types),
+            "from_airport": {
+                "code": from_code,
+                "name": f"{from_location} International Airport",
+                "city": from_location,
+            },
+            "to_airport": {"code": to_code, "name": f"{to_location} International Airport", "city": to_location},
+            "departure": dep_time.isoformat(),
+            "arrival": arr_time.isoformat(),
+            "duration_minutes": flight_minutes,
+            "is_direct": is_direct,
+            "price": round(random.uniform(99, 999), 2),
+            "currency": "USD",
+            "available_seats": random.randint(1, 30),
+            "cabin_class": random.choice(["Economy", "Premium Economy", "Business", "First"]),
+        }
+
+        # Add connection info for non-direct flights
+        if not is_direct:
+            # Create a connection point
+            connection_codes = ["ATL", "ORD", "DFW", "LHR", "CDG", "DXB", "AMS", "FRA"]
+            connection_code = random.choice(connection_codes)
+
+            # Split the flight into segments
+            segment1_duration = round(flight_minutes * random.uniform(0.3, 0.7))
+            segment2_duration = flight_minutes - segment1_duration
+
+            connection_time = random.randint(45, 180)  # between 45 minutes and 3 hours
+
+            segment1_arrival = dep_time + timedelta(minutes=segment1_duration)
+            segment2_departure = segment1_arrival + timedelta(minutes=connection_time)
+
+            flight["segments"] = [
+                {
+                    "flight_number": f"{random.choice('ABCDEFG')}{random.randint(100, 9999)}",
+                    "from_airport": flight["from_airport"],
+                    "to_airport": {
+                        "code": connection_code,
+                        "name": f"{connection_code} International Airport",
+                        "city": connection_code,
+                    },
+                    "departure": dep_time.isoformat(),
+                    "arrival": segment1_arrival.isoformat(),
+                    "duration_minutes": segment1_duration,
+                },
+                {
+                    "flight_number": f"{random.choice('ABCDEFG')}{random.randint(100, 9999)}",
+                    "from_airport": {
+                        "code": connection_code,
+                        "name": f"{connection_code} International Airport",
+                        "city": connection_code,
+                    },
+                    "to_airport": flight["to_airport"],
+                    "departure": segment2_departure.isoformat(),
+                    "arrival": arr_time.isoformat(),
+                    "duration_minutes": segment2_duration,
+                },
+            ]
+            flight["connection_airport"] = connection_code
+            flight["connection_duration_minutes"] = connection_time
+
+        departure_flights.append(flight)
+
+    # Generate return flights if return_date is provided
+    return_flights = []
+    if ret_date:
+        num_ret_flights = random.randint(3, 7)
+
+        for _ in range(num_ret_flights):
+            # Similar logic as departure flights but for return
+            hour = random.randint(6, 22)
+            minute = random.choice([0, 15, 30, 45])
+            # Convert date to datetime before setting hour and minute
+            dep_time = datetime.combine(ret_date, datetime.min.time()).replace(hour=hour, minute=minute)
+
+            flight_minutes = random.randint(60, 480)
+            arr_time = dep_time + timedelta(minutes=flight_minutes)
+
+            is_direct = random.random() < 0.6
+
+            flight = {
+                "flight_id": str(uuid.uuid4())[:8].upper(),
+                "airline": random.choice(airlines),
+                "flight_number": f"{random.choice('ABCDEFG')}{random.randint(100, 9999)}",
+                "aircraft": random.choice(aircraft_types),
+                "from_airport": {"code": to_code, "name": f"{to_location} International Airport", "city": to_location},
+                "to_airport": {
+                    "code": from_code,
+                    "name": f"{from_location} International Airport",
+                    "city": from_location,
+                },
+                "departure": dep_time.isoformat(),
+                "arrival": arr_time.isoformat(),
+                "duration_minutes": flight_minutes,
+                "is_direct": is_direct,
+                "price": round(random.uniform(99, 999), 2),
+                "currency": "USD",
+                "available_seats": random.randint(1, 30),
+                "cabin_class": random.choice(["Economy", "Premium Economy", "Business", "First"]),
+            }
+
+            # Add connection info for non-direct flights
+            if not is_direct:
+                connection_codes = ["ATL", "ORD", "DFW", "LHR", "CDG", "DXB", "AMS", "FRA"]
+                connection_code = random.choice(connection_codes)
+
+                segment1_duration = round(flight_minutes * random.uniform(0.3, 0.7))
+                segment2_duration = flight_minutes - segment1_duration
+
+                connection_time = random.randint(45, 180)
+
+                segment1_arrival = dep_time + timedelta(minutes=segment1_duration)
+                segment2_departure = segment1_arrival + timedelta(minutes=connection_time)
+
+                flight["segments"] = [
+                    {
+                        "flight_number": f"{random.choice('ABCDEFG')}{random.randint(100, 9999)}",
+                        "from_airport": flight["from_airport"],
+                        "to_airport": {
+                            "code": connection_code,
+                            "name": f"{connection_code} International Airport",
+                            "city": connection_code,
+                        },
+                        "departure": dep_time.isoformat(),
+                        "arrival": segment1_arrival.isoformat(),
+                        "duration_minutes": segment1_duration,
+                    },
+                    {
+                        "flight_number": f"{random.choice('ABCDEFG')}{random.randint(100, 9999)}",
+                        "from_airport": {
+                            "code": connection_code,
+                            "name": f"{connection_code} International Airport",
+                            "city": connection_code,
+                        },
+                        "to_airport": flight["to_airport"],
+                        "departure": segment2_departure.isoformat(),
+                        "arrival": arr_time.isoformat(),
+                        "duration_minutes": segment2_duration,
+                    },
+                ]
+                flight["connection_airport"] = connection_code
+                flight["connection_duration_minutes"] = connection_time
+
+            return_flights.append(flight)
+
+    # Combine into a single response
+    response = {"departure_flights": departure_flights, "return_flights": return_flights if ret_date else []}
+
+    # Return the flights
+    return response
 
 
 if __name__ == "__main__":
-    run()
+    mcp.run(transport="sse")
 ````
 
-## File: src/tools/itinerary-planning/Dockerfile
-````
-FROM python:3.13-slim-bookworm
+## File: src/tools/itinerary-planning/pyproject.toml
+````toml
+[project]
+name = "itinerary-planning-mcp-server"
+version = "0.1.0"
+description = "A working example of an MCP server for itinerary planning."
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.3.0",
+    "starlette>=0.46.1",
+    "uvicorn>=0.34.0",
+    "faker>=37.1.0"
+]
 
-# The installer requires curl (and certificates) to download the release archive
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
+[project.scripts]
+start = "app:run"
 
-# Download the latest installer
-ADD https://astral.sh/uv/install.sh /uv-installer.sh
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
 
-# Run the installer then remove it
-RUN sh /uv-installer.sh && rm /uv-installer.sh
+[tool.setuptools]
+package-dir = {"" = "src"}
 
-# Ensure the installed binary is on the `PATH`
-ENV PATH="/root/.local/bin/:$PATH"
-
-
-# Copy the project into the image
-ADD . /app
-
-# Sync the project into a new environment, using the frozen lockfile
-WORKDIR /app
-RUN uv sync --frozen
-
-EXPOSE 8000
-
-CMD ["uv", "run", "start"]
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+lint.select = ["E", "F", "I", "UP", "A"]
+lint.ignore = ["D203"]
 ````
 
 ## File: src/ui/.vscode/extensions.json
@@ -10586,24 +11360,6 @@ const serverConfig: ApplicationConfig = {
 export const config = mergeApplicationConfig(appConfig, serverConfig);
 ````
 
-## File: src/ui/src/app/app.config.ts
-````typescript
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { provideHttpClient, withFetch } from '@angular/common/http';
-
-export const appConfig: ApplicationConfig = {
-  providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
-    provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch())
-  ]
-};
-````
-
 ## File: src/ui/src/app/app.routes.server.ts
 ````typescript
 import { RenderMode, ServerRoute } from '@angular/ssr';
@@ -10823,35 +11579,6 @@ RUN npm install
 CMD ["ng", "serve", "--host", "0.0.0.0"]
 ````
 
-## File: src/ui/Dockerfile.production
-````
-FROM node:22.16-alpine AS build
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-RUN npm run build:production
-
-FROM nginx:alpine
-
-COPY --from=build /app/dist/app/browser /usr/share/nginx/html
-RUN mv /usr/share/nginx/html/index.csr.html /usr/share/nginx/html/index.html
-
-# Replace string 'NG_API_URL' with the value of the environment variable 'NG_API_URL'
-# This env variable should be set at runtime by Azure Container Apps
-# ARG NG_API_URL
-# ENV NG_API_URL=$NG_API_URL
-# RUN sed -i "s|{{NG_API_URL}}|$NG_API_URL|g" /usr/share/nginx/html/main-*.js
-
-EXPOSE 80
-
-# Start NGINX server
-CMD ["nginx", "-g", "daemon off;"]
-````
-
 ## File: src/ui/tsconfig.app.json
 ````json
 /* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
@@ -10900,37 +11627,6 @@ export { MCPClient as MCPSSEClient } from "./mcp-sse-client.js";
 export { MCPClient as MCPHTTPClient } from "./mcp-http-client.js";
 ````
 
-## File: src/api/src/orchestrator/llamaindex/providers/index.ts
-````typescript
-import dotenv from "dotenv";
-dotenv.config({
-  path: "./.env.development",
-});
-
-import { llm as azureOpenAI } from "./azure-openai.js";
-import { llm as githubModels } from "./github-models.js";
-import { llm as foundryLocal } from "./foundry-local.js";
-
-type LLMProvider = "azure-openai" | "github-models" | "foundry-local";
-
-const provider = (process.env.LLM_PROVIDER || "") as LLMProvider;
-
-export const llm = async () => {
-  switch (provider) {
-    case "azure-openai":
-      return azureOpenAI();
-    case "github-models":
-      return githubModels();
-    case "foundry-local":
-      return foundryLocal();
-    default:
-      throw new Error(
-        `Unknown LLM_PROVIDER "${provider}". Valid options are: azure-openai, github-models, foundry-local.`
-      );
-  }
-};
-````
-
 ## File: src/tools/customer-query/AITravelAgent.CustomerQueryServer/AITravelAgent.CustomerQueryServer.csproj
 ````
 <Project Sdk="Microsoft.NET.Sdk.Web">
@@ -10952,227 +11648,6 @@ export const llm = async () => {
   </ItemGroup>
 
 </Project>
-````
-
-## File: src/tools/destination-recommendation/src/main/java/com/microsoft/mcp/sample/server/McpServerApplication.java
-````java
-package com.microsoft.mcp.sample.server;
-
-import org.springframework.ai.tool.ToolCallbackProvider;
-import org.springframework.ai.tool.method.MethodToolCallbackProvider;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
-import com.microsoft.mcp.sample.server.service.DestinationService;
-
-@SpringBootApplication
-public class McpServerApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(McpServerApplication.class, args);
-	}
-	
-	@Bean
-	public ToolCallbackProvider destinationTools(DestinationService destinationService) {
-		return MethodToolCallbackProvider.builder().toolObjects(destinationService).build();
-	}
-
-}
-````
-
-## File: src/tools/destination-recommendation/src/test/java/com/microsoft/mcp/sample/client/ClientSse.java
-````java
-package com.microsoft.mcp.sample.client;
-
-import io.modelcontextprotocol.client.transport.WebFluxSseClientTransport;
-
-import org.springframework.web.reactive.function.client.WebClient;
-
-public class ClientSse {
-
-	public static void main(String[] args) {
-		var transport = new WebFluxSseClientTransport(WebClient.builder().baseUrl("http://localhost:5002"));
-		new SampleClient(transport).run();
-	}
-
-}
-````
-
-## File: src/tools/destination-recommendation/src/test/java/com/microsoft/mcp/sample/client/SampleClient.java
-````java
-package com.microsoft.mcp.sample.client;
-
-import java.util.Map;
-
-import io.modelcontextprotocol.client.McpClient;
-import io.modelcontextprotocol.spec.McpClientTransport;
-import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
-import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.ListToolsResult;
-
-public class SampleClient {
-
-	private final McpClientTransport transport;
-
-	public SampleClient(McpClientTransport transport) {
-		this.transport = transport;
-	}
-
-	public void run() {
-
-		var client = McpClient.sync(this.transport).build();
-		client.initialize();
-
-		client.ping();
-
-		// List and demonstrate tools
-		ListToolsResult toolsList = client.listTools();
-		System.out.println("Available Tools = " + toolsList);
-		// Call the getDestinationsByBudget tool
-		CallToolResult destinationsResult = client.callTool(new CallToolRequest("getDestinationsByBudget", 
-				Map.of("budget", "MODERATE")));
-		System.out.println("Get Destinations By Budget Result: " + destinationsResult);
-
-		client.closeGracefully();
-	}
-}
-````
-
-## File: src/tools/destination-recommendation/Dockerfile
-````
-# Build stage
-FROM maven:3.9.9-eclipse-temurin-24-noble AS build
-WORKDIR /app
-
-# Copy only the POM file first to cache dependencies
-COPY pom.xml ./
-# Download dependencies - this layer will be cached unless pom.xml changes
-RUN mvn dependency:go-offline
-
-# Now copy the source code (which changes more frequently)
-COPY src ./src/
-
-# Build the application
-RUN mvn clean package -DskipTests
-
-# Runtime stage
-FROM eclipse-temurin:24-jdk-alpine
-WORKDIR /app
-# Copy the built artifact from the build stage
-COPY --from=build /app/target/destination-server-0.0.1-SNAPSHOT.jar /app/application.jar
-# Expose the port your application runs on
-EXPOSE 8080
-# Run the application
-ENTRYPOINT ["java", "-jar", "/app/application.jar"]
-````
-
-## File: src/tools/destination-recommendation/pom.xml
-````xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.6</version>
-        <relativePath /> <!-- lookup parent from repository -->
-    </parent>
-
-    <groupId>com.example</groupId>
-
-    <artifactId>destination-server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-
-    <name>Destination Server</name>
-    <description>Sample Spring Boot application demonstrating MCP client and server usage</description>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.ai</groupId>
-                <artifactId>spring-ai-bom</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-starter-mcp-server-webflux</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <release>21</release>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-    <properties>
-        <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-    </properties>
-
-    <repositories>
-        <repository>
-            <name>Central Portal Snapshots</name>
-            <id>central-portal-snapshots</id>
-            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>https://repo.spring.io/snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
-
-</project>
 ````
 
 ## File: src/tools/echo-ping/Dockerfile
@@ -11253,421 +11728,6 @@ CMD ["node", "./dist/index.js"]
     "typescript": "^5.3.3"
   }
 }
-````
-
-## File: src/tools/itinerary-planning/src/app_routes.py
-````python
-from mcp.server.sse import SseServerTransport
-from starlette.responses import HTMLResponse
-from starlette.routing import Mount, Route
-
-from mcp_server import mcp
-
-# Create SSE transport
-sse = SseServerTransport("/messages/")
-
-
-# MCP SSE handler function
-async def handle_sse(request):
-    async with sse.connect_sse(request.scope, request.receive, request._send) as (
-        read_stream,
-        write_stream,
-    ):
-        await mcp._mcp_server.run(read_stream, write_stream, mcp._mcp_server.create_initialization_options())
-
-
-# Not strictly necessary
-async def homepage(request):
-    return HTMLResponse("Itinerary planning MCP server")
-
-
-routes = [
-    Route("/", endpoint=homepage),
-    # MCP related routes
-    Route("/sse", endpoint=handle_sse),
-    Mount("/messages/", app=sse.handle_post_message),
-]
-````
-
-## File: src/tools/itinerary-planning/src/mcp_server.py
-````python
-import random
-import re
-import uuid
-from datetime import datetime, timedelta
-from typing import Annotated
-
-from faker import Faker
-from mcp.server.fastmcp import FastMCP
-from pydantic import Field
-
-mcp = FastMCP("weather")
-fake = Faker()
-
-
-def validate_iso_date(date_str: str, param_name: str) -> datetime.date:
-    """
-    Validates that a string is in ISO format (YYYY-MM-DD) and returns the parsed date.
-
-    Args:
-        date_str: The date string to validate
-        param_name: Name of the parameter for error messages
-
-    Returns:
-        The parsed date object
-
-    Raises:
-        ValueError: If the date is not in ISO format or is invalid
-    """
-    iso_pattern = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-    if not iso_pattern.match(date_str):
-        raise ValueError(f"{param_name} must be in ISO format (YYYY-MM-DD), got: {date_str}")
-
-    try:
-        return datetime.strptime(date_str, "%Y-%m-%d").date()
-    except ValueError as e:
-        raise ValueError(f"Invalid {param_name}: {e}")
-
-
-@mcp.tool()
-async def suggest_hotels(
-    location: Annotated[str, Field(description="Location (city or area) to search for hotels")],
-    check_in: Annotated[str, Field(description="Check-in date in ISO format (YYYY-MM-DD)")],
-    check_out: Annotated[str, Field(description="Check-out date in ISO format (YYYY-MM-DD)")],
-) -> str:
-    """
-    Suggest hotels based on location and dates.
-    """
-    # Validate dates
-    check_in_date = validate_iso_date(check_in, "check_in")
-    check_out_date = validate_iso_date(check_out, "check_out")
-
-    # Ensure check_out is after check_in
-    if check_out_date <= check_in_date:
-        raise ValueError("check_out date must be after check_in date")
-
-    # Create realistic mock data for hotels
-    hotel_types = ["Luxury", "Boutique", "Budget", "Business"]
-    amenities = ["Free WiFi", "Pool", "Spa", "Gym", "Restaurant", "Bar", "Room Service", "Parking"]
-
-    # Generate a rating between 3.0 and 5.0
-    def generate_rating():
-        return round(random.uniform(3.0, 5.0), 1)
-
-    # Generate a price based on hotel type
-    def generate_price(hotel_type):
-        price_ranges = {
-            "Luxury": (250, 600),
-            "Boutique": (180, 350),
-            "Budget": (80, 150),
-            "Resort": (200, 500),
-            "Business": (150, 300),
-        }
-        min_price, max_price = price_ranges.get(hotel_type, (100, 300))
-        return round(random.uniform(min_price, max_price))
-
-    # Generate between 3 and 8 hotels
-    num_hotels = random.randint(3, 8)
-    hotels = []
-
-    neighborhoods = [
-        "Downtown",
-        "Historic District",
-        "Waterfront",
-        "Business District",
-        "Arts District",
-        "University Area",
-    ]
-
-    for i in range(num_hotels):
-        hotel_type = random.choice(hotel_types)
-        hotel_amenities = random.sample(amenities, random.randint(3, 6))
-        neighborhood = random.choice(neighborhoods)
-
-        hotel = {
-            "name": f"{hotel_type} {['Hotel', 'Inn', 'Suites', 'Resort', 'Plaza'][random.randint(0, 4)]}",
-            "address": fake.street_address(),
-            "location": f"{neighborhood}, {location}",
-            "rating": generate_rating(),
-            "price_per_night": generate_price(hotel_type),
-            "hotel_type": hotel_type,
-            "amenities": hotel_amenities,
-            "available_rooms": random.randint(1, 15),
-        }
-        hotels.append(hotel)
-
-    # Sort by rating to show best hotels first
-    hotels.sort(key=lambda x: x["rating"], reverse=True)
-    return hotels
-
-
-@mcp.tool()
-async def suggest_flights(
-    from_location: Annotated[str, Field(description="Departure location (city or airport)")],
-    to_location: Annotated[str, Field(description="Destination location (city or airport)")],
-    departure_date: Annotated[str, Field(description="Departure date in ISO format (YYYY-MM-DD)")],
-    return_date: Annotated[str | None, Field(description="Return date in ISO format (YYYY-MM-DD)")] = None,
-) -> str:
-    """
-    Suggest flights based on locations and dates.
-    """
-    # Validate dates
-    dep_date = validate_iso_date(departure_date, "departure_date")
-    ret_date = None
-    if return_date:
-        ret_date = validate_iso_date(return_date, "return_date")
-        # Ensure return date is after departure date
-        if ret_date <= dep_date:
-            raise ValueError("return_date must be after departure_date")
-
-    # Create realistic mock data for flights
-    airlines = [
-        "SkyWings",
-        "Global Air",
-        "Atlantic Airways",
-        "Pacific Express",
-        "Mountain Jets",
-        "Stellar Airlines",
-        "Sunshine Airways",
-        "Northern Flights",
-    ]
-
-    aircraft_types = ["Boeing 737", "Airbus A320", "Boeing 787", "Airbus A350", "Embraer E190", "Bombardier CRJ900"]
-
-    # Generate airport codes based on locations
-    def generate_airport_code(city):
-        # Simple simulation of airport codes
-        # In reality, this would use a database of real airport codes
-        vowels = "AEIOU"
-        consonants = "BCDFGHJKLMNPQRSTVWXYZ"
-
-        # Use first letter of city if possible
-        first_char = city[0].upper()
-        if first_char in consonants:
-            code = first_char
-        else:
-            code = random.choice(consonants)
-
-        # Add two random letters, preferring consonants
-        for _ in range(2):
-            if random.random() < 0.7:  # 70% chance of consonant
-                code += random.choice(consonants)
-            else:
-                code += random.choice(vowels)
-
-        return code
-
-    from_code = generate_airport_code(from_location)
-    to_code = generate_airport_code(to_location)
-
-    # Generate departure flights
-    departure_flights = []
-    num_dep_flights = random.randint(3, 7)
-
-    for _ in range(num_dep_flights):
-        # Generate departure time (between 6 AM and 10 PM)
-        hour = random.randint(6, 22)
-        minute = random.choice([0, 15, 30, 45])
-        # Convert date to datetime before setting hour and minute
-        dep_time = datetime.combine(dep_date, datetime.min.time()).replace(hour=hour, minute=minute)
-
-        # Flight duration between 1 and 8 hours
-        flight_minutes = random.randint(60, 480)
-        arr_time = dep_time + timedelta(minutes=flight_minutes)
-
-        # Determine if this is a direct or connecting flight
-        is_direct = random.random() < 0.6  # 60% chance of direct flight
-
-        flight = {
-            "flight_id": str(uuid.uuid4())[:8].upper(),
-            "airline": random.choice(airlines),
-            "flight_number": f"{random.choice('ABCDEFG')}{random.randint(100, 9999)}",
-            "aircraft": random.choice(aircraft_types),
-            "from_airport": {
-                "code": from_code,
-                "name": f"{from_location} International Airport",
-                "city": from_location,
-            },
-            "to_airport": {"code": to_code, "name": f"{to_location} International Airport", "city": to_location},
-            "departure": dep_time.isoformat(),
-            "arrival": arr_time.isoformat(),
-            "duration_minutes": flight_minutes,
-            "is_direct": is_direct,
-            "price": round(random.uniform(99, 999), 2),
-            "currency": "USD",
-            "available_seats": random.randint(1, 30),
-            "cabin_class": random.choice(["Economy", "Premium Economy", "Business", "First"]),
-        }
-
-        # Add connection info for non-direct flights
-        if not is_direct:
-            # Create a connection point
-            connection_codes = ["ATL", "ORD", "DFW", "LHR", "CDG", "DXB", "AMS", "FRA"]
-            connection_code = random.choice(connection_codes)
-
-            # Split the flight into segments
-            segment1_duration = round(flight_minutes * random.uniform(0.3, 0.7))
-            segment2_duration = flight_minutes - segment1_duration
-
-            connection_time = random.randint(45, 180)  # between 45 minutes and 3 hours
-
-            segment1_arrival = dep_time + timedelta(minutes=segment1_duration)
-            segment2_departure = segment1_arrival + timedelta(minutes=connection_time)
-
-            flight["segments"] = [
-                {
-                    "flight_number": f"{random.choice('ABCDEFG')}{random.randint(100, 9999)}",
-                    "from_airport": flight["from_airport"],
-                    "to_airport": {
-                        "code": connection_code,
-                        "name": f"{connection_code} International Airport",
-                        "city": connection_code,
-                    },
-                    "departure": dep_time.isoformat(),
-                    "arrival": segment1_arrival.isoformat(),
-                    "duration_minutes": segment1_duration,
-                },
-                {
-                    "flight_number": f"{random.choice('ABCDEFG')}{random.randint(100, 9999)}",
-                    "from_airport": {
-                        "code": connection_code,
-                        "name": f"{connection_code} International Airport",
-                        "city": connection_code,
-                    },
-                    "to_airport": flight["to_airport"],
-                    "departure": segment2_departure.isoformat(),
-                    "arrival": arr_time.isoformat(),
-                    "duration_minutes": segment2_duration,
-                },
-            ]
-            flight["connection_airport"] = connection_code
-            flight["connection_duration_minutes"] = connection_time
-
-        departure_flights.append(flight)
-
-    # Generate return flights if return_date is provided
-    return_flights = []
-    if ret_date:
-        num_ret_flights = random.randint(3, 7)
-
-        for _ in range(num_ret_flights):
-            # Similar logic as departure flights but for return
-            hour = random.randint(6, 22)
-            minute = random.choice([0, 15, 30, 45])
-            # Convert date to datetime before setting hour and minute
-            dep_time = datetime.combine(ret_date, datetime.min.time()).replace(hour=hour, minute=minute)
-
-            flight_minutes = random.randint(60, 480)
-            arr_time = dep_time + timedelta(minutes=flight_minutes)
-
-            is_direct = random.random() < 0.6
-
-            flight = {
-                "flight_id": str(uuid.uuid4())[:8].upper(),
-                "airline": random.choice(airlines),
-                "flight_number": f"{random.choice('ABCDEFG')}{random.randint(100, 9999)}",
-                "aircraft": random.choice(aircraft_types),
-                "from_airport": {"code": to_code, "name": f"{to_location} International Airport", "city": to_location},
-                "to_airport": {
-                    "code": from_code,
-                    "name": f"{from_location} International Airport",
-                    "city": from_location,
-                },
-                "departure": dep_time.isoformat(),
-                "arrival": arr_time.isoformat(),
-                "duration_minutes": flight_minutes,
-                "is_direct": is_direct,
-                "price": round(random.uniform(99, 999), 2),
-                "currency": "USD",
-                "available_seats": random.randint(1, 30),
-                "cabin_class": random.choice(["Economy", "Premium Economy", "Business", "First"]),
-            }
-
-            # Add connection info for non-direct flights
-            if not is_direct:
-                connection_codes = ["ATL", "ORD", "DFW", "LHR", "CDG", "DXB", "AMS", "FRA"]
-                connection_code = random.choice(connection_codes)
-
-                segment1_duration = round(flight_minutes * random.uniform(0.3, 0.7))
-                segment2_duration = flight_minutes - segment1_duration
-
-                connection_time = random.randint(45, 180)
-
-                segment1_arrival = dep_time + timedelta(minutes=segment1_duration)
-                segment2_departure = segment1_arrival + timedelta(minutes=connection_time)
-
-                flight["segments"] = [
-                    {
-                        "flight_number": f"{random.choice('ABCDEFG')}{random.randint(100, 9999)}",
-                        "from_airport": flight["from_airport"],
-                        "to_airport": {
-                            "code": connection_code,
-                            "name": f"{connection_code} International Airport",
-                            "city": connection_code,
-                        },
-                        "departure": dep_time.isoformat(),
-                        "arrival": segment1_arrival.isoformat(),
-                        "duration_minutes": segment1_duration,
-                    },
-                    {
-                        "flight_number": f"{random.choice('ABCDEFG')}{random.randint(100, 9999)}",
-                        "from_airport": {
-                            "code": connection_code,
-                            "name": f"{connection_code} International Airport",
-                            "city": connection_code,
-                        },
-                        "to_airport": flight["to_airport"],
-                        "departure": segment2_departure.isoformat(),
-                        "arrival": arr_time.isoformat(),
-                        "duration_minutes": segment2_duration,
-                    },
-                ]
-                flight["connection_airport"] = connection_code
-                flight["connection_duration_minutes"] = connection_time
-
-            return_flights.append(flight)
-
-    # Combine into a single response
-    response = {"departure_flights": departure_flights, "return_flights": return_flights if ret_date else []}
-
-    # Return the flights
-    return response
-
-
-if __name__ == "__main__":
-    mcp.run(transport="sse")
-````
-
-## File: src/tools/itinerary-planning/pyproject.toml
-````toml
-[project]
-name = "itinerary-planning-mcp-server"
-version = "0.1.0"
-description = "A working example of an MCP server for itinerary planning."
-requires-python = ">=3.12"
-dependencies = [
-    "httpx>=0.28.1",
-    "mcp[cli]>=1.3.0",
-    "starlette>=0.46.1",
-    "uvicorn>=0.34.0",
-    "faker>=37.1.0"
-]
-
-[project.scripts]
-start = "app:run"
-
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools]
-package-dir = {"" = "src"}
-
-[tool.ruff]
-line-length = 120
-target-version = "py313"
-lint.select = ["E", "F", "I", "UP", "A"]
-lint.ignore = ["D203"]
 ````
 
 ## File: src/ui/libs/ui/ui-avatar-helm/src/lib/hlm-avatar.component.ts
@@ -11809,6 +11869,23 @@ export class ThemeService {
 <router-outlet />
 ````
 
+## File: src/ui/src/app/app.config.ts
+````typescript
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
+import { provideHttpClient, withFetch } from '@angular/common/http';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+    // provideClientHydration(withEventReplay()), // seems to cause issues with hydration in some cases on initial app load
+    provideHttpClient(withFetch())
+  ]
+};
+````
+
 ## File: src/ui/src/environments/environment.ts
 ````typescript
 export const environment = {
@@ -11832,6 +11909,29 @@ export const environment = {
   <app-root></app-root>
 </body>
 </html>
+````
+
+## File: src/ui/Dockerfile.production
+````
+FROM node:22.16-alpine AS build
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+RUN npm run build:production
+
+FROM nginx:alpine
+
+COPY --from=build /app/dist/app/browser /usr/share/nginx/html
+RUN mv /usr/share/nginx/html/index.csr.html /usr/share/nginx/html/index.html
+
+EXPOSE 80
+
+# Start NGINX server
+CMD ["nginx", "-g", "daemon off;"]
 ````
 
 ## File: src/ui/tailwind.config.js
@@ -12010,6 +12110,160 @@ output EMBEDDING_DIM string = llamaIndexConfig.embedding.dim
 output AZURE_CLIENT_ID string = resources.outputs.AZURE_CLIENT_ID
 output AZURE_TENANT_ID string = tenant().tenantId
 output MCP_ECHO_PING_ACCESS_TOKEN string = llamaIndexConfig.sampleAccessTokens.echo
+````
+
+## File: src/api/src/orchestrator/llamaindex/providers/azure-openai.ts
+````typescript
+import { openai } from "llamaindex";
+import {
+  DefaultAzureCredential,
+  getBearerTokenProvider,
+  ManagedIdentityCredential,
+} from "@azure/identity";
+
+const AZURE_COGNITIVE_SERVICES_SCOPE =
+  "https://cognitiveservices.azure.com/.default";
+
+export const llm = async () => {
+  console.log("Using Azure OpenAI");
+
+  const isRunningInLocalDocker = process.env.IS_LOCAL_DOCKER_ENV === "true";
+  
+  if (isRunningInLocalDocker) {
+    // running in local Docker environment
+    console.log(
+      "Running in local Docker environment, Azure Managed Identity is not supported. Authenticating with apiKey."
+    );
+    
+    return openai({
+      azure: {
+        endpoint: process.env.AZURE_OPENAI_ENDPOINT,
+        deployment: process.env.AZURE_OPENAI_DEPLOYMENT,
+        apiKey: process.env.AZURE_OPENAI_API_KEY,
+      },
+    });
+  }
+  
+  let credential: any = new DefaultAzureCredential();
+  const clientId = process.env.AZURE_CLIENT_ID;
+  if (clientId) {
+    // running in production with a specific client ID
+    console.log("Using Azure Client ID:", clientId);
+    credential = new ManagedIdentityCredential({
+      clientId,
+    });
+  }
+
+  const azureADTokenProvider = getBearerTokenProvider(
+    credential,
+    AZURE_COGNITIVE_SERVICES_SCOPE
+  );
+
+  return openai({
+    azure: {
+      azureADTokenProvider,
+      endpoint: process.env.AZURE_OPENAI_ENDPOINT,
+      deployment: process.env.AZURE_OPENAI_DEPLOYMENT,
+    },
+  });
+};
+````
+
+## File: src/api/src/orchestrator/llamaindex/providers/index.ts
+````typescript
+import dotenv from "dotenv";
+dotenv.config();
+
+import { llm as azureOpenAI } from "./azure-openai.js";
+import { llm as githubModels } from "./github-models.js";
+import { llm as foundryLocal } from "./foundry-local.js";
+
+type LLMProvider = "azure-openai" | "github-models" | "foundry-local";
+
+const provider = (process.env.LLM_PROVIDER || "") as LLMProvider;
+
+export const llm = async () => {
+  switch (provider) {
+    case "azure-openai":
+      return azureOpenAI();
+    case "github-models":
+      return githubModels();
+    case "foundry-local":
+      return foundryLocal();
+    default:
+      throw new Error(
+        `Unknown LLM_PROVIDER "${provider}". Valid options are: azure-openai, github-models, foundry-local.`
+      );
+  }
+};
+````
+
+## File: src/ui/src/styles.css
+````css
+/* You can add global styles to this file, and also import other style files */
+@import "@angular/cdk/overlay-prebuilt.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Set up variable CSS properties */
+:root {
+  --font-family: "Inter", system-ui, sans-serif;
+  --ng-icon__size: 32px;
+}
+
+
+/* Light mode support */
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    color-scheme: light;
+  }
+}
+
+
+/* Dark mode class for manual toggling */
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 210 40% 96.1%; /* Increased contrast for better readability */
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 240 4.9% 83.9%;
+  color-scheme: dark;
+}
 ````
 
 ## File: infra/resources.bicep
@@ -12737,19 +12991,6 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.10.2' =  {
         }
         versionUpgradeOption: 'OnceCurrentVersionExpired'
       }
-      {
-        name: llamaIndexConfig.embedding.model
-        model: {
-          format: 'OpenAI'
-          name: llamaIndexConfig.embedding.model
-          version: llamaIndexConfig.embedding.version
-        }
-        sku: {
-          capacity: llamaIndexConfig.embedding.capacity
-          name: 'Standard'
-        }
-        versionUpgradeOption: 'OnceCurrentVersionExpired'
-      }
     ]
     roleAssignments: [
       {
@@ -12778,69 +13019,60 @@ output NG_API_URL string = 'https://api.${containerAppsEnvironment.outputs.defau
 output AZURE_CLIENT_ID string = apiIdentity.outputs.clientId
 ````
 
-## File: src/api/src/orchestrator/llamaindex/providers/azure-openai.ts
-````typescript
-import { openai } from "llamaindex";
-import {
-  DefaultAzureCredential,
-  getBearerTokenProvider,
-  ManagedIdentityCredential,
-} from "@azure/identity";
-
-const AZURE_COGNITIVE_SERVICES_SCOPE =
-  "https://cognitiveservices.azure.com/.default";
-
-export const llm = async () => {
-  console.log("Using Azure OpenAI");
-
-  const isRunningInLocalDocker = process.env.IS_LOCAL_DOCKER_ENV === "true";
-  
-  if (isRunningInLocalDocker) {
-    // running in local Docker environment
-    console.log(
-      "Running in local Docker environment, Azure Managed Identity is not supported. Authenticating with apiKey."
-    );
-    
-    return openai({
-      azure: {
-        endpoint: process.env.AZURE_OPENAI_ENDPOINT,
-        deployment: process.env.AZURE_OPENAI_DEPLOYMENT,
-        apiKey: process.env.AZURE_OPENAI_API_KEY,
-      },
-    });
+## File: src/api/package.json
+````json
+{
+  "name": "azure-ai-travel-agents-api",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsx --watch src/index.ts",
+    "build": "tsc"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@azure/ai-projects": "^1.0.0-beta.5",
+    "@azure/identity": "^4.9.1",
+    "@llamaindex/tools": "0.0.8",
+    "@modelcontextprotocol/sdk": "^1.10.2",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.57.0",
+    "@opentelemetry/exporter-metrics-otlp-grpc": "^0.200.0",
+    "@opentelemetry/exporter-trace-otlp-grpc": "^0.200.0",
+    "@opentelemetry/instrumentation-express": "^0.48.0",
+    "@opentelemetry/instrumentation-http": "^0.200.0",
+    "@opentelemetry/sdk-metrics": "^2.0.0",
+    "@opentelemetry/sdk-node": "^0.200.0",
+    "@opentelemetry/sdk-trace-node": "^2.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.0.1",
+    "foundry-local-sdk": "^0.3.1",
+    "llamaindex": "0.10.3",
+    "openai": "^4.96.0",
+    "type": "^2.7.3",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "tsx": "^4.19.4",
+    "typescript": "^5.3.3"
+  },
+  "volta": {
+    "node": "22.16.0"
   }
-  
-  let credential: any = new DefaultAzureCredential();
-  const clientId = process.env.AZURE_CLIENT_ID;
-  if (clientId) {
-    // running in production with a specific client ID
-    console.log("Using Azure Client ID:", clientId);
-    credential = new ManagedIdentityCredential({
-      clientId,
-    });
-  }
-
-  const azureADTokenProvider = getBearerTokenProvider(
-    credential,
-    AZURE_COGNITIVE_SERVICES_SCOPE
-  );
-
-  return openai({
-    azure: {
-      azureADTokenProvider,
-      endpoint: process.env.AZURE_OPENAI_ENDPOINT,
-      deployment: process.env.AZURE_OPENAI_DEPLOYMENT,
-    },
-  });
-};
+}
 ````
 
 ## File: src/tools/echo-ping/src/index.ts
 ````typescript
 import dotenv from "dotenv";
-dotenv.config({
-  path: '.env.development',
-});
+dotenv.config();
 
 import { meter } from "./instrumentation.js";
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -12934,122 +13166,6 @@ process.on('SIGINT', async () => {
   await server.close();
   process.exit(0);
 });
-````
-
-## File: src/ui/src/styles.css
-````css
-/* You can add global styles to this file, and also import other style files */
-@import "@angular/cdk/overlay-prebuilt.css";
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Set up variable CSS properties */
-:root {
-  --font-family: "Inter", system-ui, sans-serif;
-  --ng-icon__size: 32px;
-}
-
-
-/* Light mode support */
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    color-scheme: light;
-  }
-}
-
-
-/* Dark mode class for manual toggling */
-.dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 0 0% 98%;
-  --primary-foreground: 240 5.9% 10%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 210 40% 96.1%; /* Increased contrast for better readability */
-  --accent: 240 3.7% 15.9%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 240 4.9% 83.9%;
-  color-scheme: dark;
-}
-````
-
-## File: src/api/package.json
-````json
-{
-  "name": "api",
-  "version": "1.0.0",
-  "type": "module",
-  "main": "dist/index.js",
-  "scripts": {
-    "start": "tsx --watch src/index.ts",
-    "build": "tsc"
-  },
-  "files": [
-    "dist"
-  ],
-  "dependencies": {
-    "@azure/ai-projects": "^1.0.0-beta.5",
-    "@azure/identity": "^4.9.1",
-    "@llamaindex/openai": "^0.3.5",
-    "@llamaindex/tools": "^0.0.8",
-    "@modelcontextprotocol/sdk": "^1.10.2",
-    "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.57.0",
-    "@opentelemetry/exporter-metrics-otlp-grpc": "^0.200.0",
-    "@opentelemetry/exporter-trace-otlp-grpc": "^0.200.0",
-    "@opentelemetry/instrumentation-express": "^0.48.0",
-    "@opentelemetry/instrumentation-http": "^0.200.0",
-    "@opentelemetry/sdk-metrics": "^2.0.0",
-    "@opentelemetry/sdk-node": "^0.200.0",
-    "@opentelemetry/sdk-trace-node": "^2.0.0",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.1",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^5.0.1",
-    "foundry-local-sdk": "^0.3.1",
-    "llamaindex": "^0.10.3",
-    "openai": "^4.96.0",
-    "type": "^2.7.3",
-    "zod": "^3.24.2"
-  },
-  "devDependencies": {
-    "@types/node": "^20.11.24",
-    "tsx": "^4.19.4",
-    "typescript": "^5.3.3"
-  }
-}
 ````
 
 ## File: src/ui/src/app/chat-conversation/chat-conversation.component.css
@@ -13300,12 +13416,105 @@ export async function mcpToolsList(config: McpServerDefinition[]) {
 }
 ````
 
+## File: src/docker-compose.yml
+````yaml
+name: ai-travel-agents
+services:
+  tool-customer-query:
+    container_name: tool-customer-query
+    build: ./tools/customer-query
+    ports:
+      - "5001:8080"
+    environment:
+      - OTEL_SERVICE_NAME=tool-customer-query
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889
+
+  tool-destination-recommendation:
+    container_name: tool-destination-recommendation
+    build: ./tools/destination-recommendation
+    ports:
+      - "5002:8080"
+
+  tool-itinerary-planning:
+    container_name: tool-itinerary-planning
+    build: ./tools/itinerary-planning
+    ports:
+      - "5003:8000"
+
+  tool-code-evaluation:
+    container_name: tool-code-evaluation
+    build: ./tools/code-evaluation
+    ports:
+      - "5004:5000"
+
+  tool-model-inference:
+    container_name: tool-model-inference
+    build: ./tools/model-inference
+    ports:
+      - "5005:5000"
+  
+  tool-web-search:
+    container_name: tool-web-search
+    build: ./tools/web-search
+    ports:
+      - "5006:5000"
+      
+  tool-echo-ping:
+    container_name: tool-echo-ping
+    build: ./tools/echo-ping
+    ports:
+      - "5007:3000"
+    depends_on:
+      - aspire-dashboard
+    env_file:
+      - "./tools/echo-ping/.env"
+      - "./tools/echo-ping/.env.docker" # override .env with .env.docker
+
+  web-api:
+    container_name: web-api
+    build: ./api
+    ports:
+      - "4000:4000"
+    depends_on:
+      - tool-customer-query
+      - tool-destination-recommendation
+      - tool-itinerary-planning
+      - tool-code-evaluation
+      - tool-model-inference
+      - tool-web-search
+      - tool-echo-ping
+    env_file: 
+      - "./api/.env"
+      - "./api/.env.docker" # override .env with .env.docker
+    environment:
+      - IS_LOCAL_DOCKER_ENV=true 
+      - DEBUG=true # Enable Azure JS SDK debug logging
+
+  web-ui:
+    container_name: web-ui
+    build: ./ui
+    ports:
+      - "4200:4200"
+    depends_on:
+      - web-api
+    env_file: 
+      - "./api/.env"
+      - "./api/.env.docker" # override .env with .env.docker
+
+  aspire-dashboard:
+    container_name: aspire-dashboard
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:9.1
+    ports:
+      - 18888:18888
+      - 4317:18889
+    environment:
+      - DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
+````
+
 ## File: src/api/src/orchestrator/llamaindex/index.ts
 ````typescript
 import dotenv from "dotenv";
-dotenv.config({
-  path: "./.env.development",
-});
+dotenv.config();
 
 import { mcp } from "@llamaindex/tools";
 import { agent, multiAgent, ToolCallLLM } from "llamaindex";
@@ -13458,72 +13667,6 @@ export async function setupAgents(filteredTools: McpServerDefinition[] = []) {
 }
 ````
 
-## File: src/ui/package.json
-````json
-{
-  "name": "ai-travel-agents-ui",
-  "version": "0.0.0",
-  "scripts": {
-    "ng": "ng",
-    "start": "NG_APP_ENV=development ng serve",
-    "build": "NG_APP_ENV=development ng build --configuration development",
-    "build:docker": "NG_APP_ENV=docker ng build --configuration development",
-    "build:production": "NG_APP_ENV=production ng build --configuration production",
-    "watch": "NG_APP_ENV=development ng build --watch --configuration development",
-    "test": "NG_APP_ENV=development ng test",
-    "serve:ssr:ai-travel-agents-ui": "node dist/app/server/server.mjs"
-  },
-  "private": true,
-  "dependencies": {
-    "@angular/cdk": "^19.2.7",
-    "@angular/common": "^19.2.0",
-    "@angular/compiler": "^19.2.0",
-    "@angular/core": "^19.2.0",
-    "@angular/forms": "^19.2.0",
-    "@angular/platform-browser": "^19.2.0",
-    "@angular/platform-browser-dynamic": "^19.2.0",
-    "@angular/platform-server": "^19.2.0",
-    "@angular/router": "^19.2.0",
-    "@angular/ssr": "^19.2.5",
-    "@ng-icons/core": "^29.10.0",
-    "@ng-icons/lucide": ">=29.0.0",
-    "@spartan-ng/brain": "^0.0.1-alpha.450",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^2.1.1",
-    "embla-carousel-angular": "19.0.0",
-    "express": "^4.18.2",
-    "marked": "^15.0.7",
-    "ngx-markdown": "^19.1.1",
-    "ngx-scrollbar": ">=16.0.0",
-    "ngx-sonner": "^3.0.0",
-    "postcss": "^8.5.3",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.15.0"
-  },
-  "devDependencies": {
-    "@angular-devkit/build-angular": "^19.2.5",
-    "@angular/cli": "^19.2.5",
-    "@angular/compiler-cli": "^19.2.0",
-    "@ngx-env/builder": "^19.0.4",
-    "@spartan-ng/cli": "^0.0.1-alpha.433",
-    "@types/express": "^4.17.17",
-    "@types/jasmine": "~5.1.0",
-    "@types/node": "^18.18.0",
-    "jasmine-core": "~5.6.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
-    "tailwind-merge": "^2.2.0",
-    "tailwindcss": "^3.4.17",
-    "tailwindcss-animate": "^1.0.6",
-    "typescript": "~5.7.2"
-  }
-}
-````
-
 ## File: src/api/src/index.ts
 ````typescript
 import dotenv from "dotenv";
@@ -13577,18 +13720,6 @@ apiRouter.get("/tools", async (req, res) => {
     res.status(500).json({ error: "Error fetching MCP tools" });
   }
 });
-
-// // Agents endpoint
-// apiRouter.get("/agents", async (req, res) => {
-//   try {
-//     const agents = (await setupAgents(Object.keys(McpToolsConfig()))).getAgents();
-//     console.log("Available agents:", agents);
-//     res.status(200).json({ agents });
-//   } catch (error) {
-//     console.error("Error fetching MCP tools:", error);
-//     res.status(500).json({ error: "Error fetching MCP tools" });
-//   }
-// });
 
 // Chat endpoint with Server-Sent Events (SSE) for streaming responses
 // @ts-ignore - Ignoring TypeScript errors for Express route handlers
@@ -13845,99 +13976,73 @@ export class ApiService {
 }
 ````
 
-## File: src/docker-compose.yml
-````yaml
-name: ai-travel-agents
-services:
-  tool-customer-query:
-    container_name: tool-customer-query
-    build: ./tools/customer-query
-    ports:
-      - "5001:8080"
-    environment:
-      - OTEL_SERVICE_NAME=tool-customer-query
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889
-
-  tool-destination-recommendation:
-    container_name: tool-destination-recommendation
-    build: ./tools/destination-recommendation
-    ports:
-      - "5002:8080"
-
-  tool-itinerary-planning:
-    container_name: tool-itinerary-planning
-    build: ./tools/itinerary-planning
-    ports:
-      - "5003:8000"
-
-  tool-code-evaluation:
-    container_name: tool-code-evaluation
-    build: ./tools/code-evaluation
-    ports:
-      - "5004:5000"
-
-  tool-model-inference:
-    container_name: tool-model-inference
-    build: ./tools/model-inference
-    ports:
-      - "5005:5000"
-  
-  tool-web-search:
-    container_name: tool-web-search
-    build: ./tools/web-search
-    ports:
-      - "5006:5000"
-      
-  tool-echo-ping:
-    container_name: tool-echo-ping
-    build: ./tools/echo-ping
-    ports:
-      - "5007:3000"
-    depends_on:
-      - aspire-dashboard
-    env_file:
-      - "./tools/echo-ping/.env.development"
-      - "./tools/echo-ping/.env.docker" # override .env with .env.docker
-
-  web-api:
-    container_name: web-api
-    build: ./api
-    ports:
-      - "4000:4000"
-    depends_on:
-      - tool-customer-query
-      - tool-destination-recommendation
-      - tool-itinerary-planning
-      - tool-code-evaluation
-      - tool-model-inference
-      - tool-web-search
-      - tool-echo-ping
-    env_file: 
-      - "./api/.env.development"
-      - "./api/.env.docker" # override .env with .env.docker
-    environment:
-      - IS_LOCAL_DOCKER_ENV=true 
-      - DEBUG=true # Enable Azure JS SDK debug logging
-
-  web-ui:
-    container_name: web-ui
-    build: ./ui
-    ports:
-      - "4200:4200"
-    depends_on:
-      - web-api
-    env_file: 
-      - "./api/.env.development"
-      - "./api/.env.docker" # override .env with .env.docker
-
-  aspire-dashboard:
-    container_name: aspire-dashboard
-    image: mcr.microsoft.com/dotnet/aspire-dashboard:9.1
-    ports:
-      - 18888:18888
-      - 4317:18889
-    environment:
-      - DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
+## File: src/ui/package.json
+````json
+{
+  "name": "azure-ai-travel-agents-ui",
+  "version": "1.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "NG_APP_ENV=development ng serve",
+    "build": "NG_APP_ENV=development ng build --configuration development",
+    "build:docker": "NG_APP_ENV=docker ng build --configuration development",
+    "build:production": "NG_APP_ENV=production ng build --configuration production",
+    "watch": "NG_APP_ENV=development ng build --watch --configuration development",
+    "test": "NG_APP_ENV=development ng test",
+    "serve:ssr": "node dist/app/server/server.mjs"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/cdk": "^19.2.7",
+    "@angular/common": "^19.2.0",
+    "@angular/compiler": "^19.2.0",
+    "@angular/core": "^19.2.0",
+    "@angular/forms": "^19.2.0",
+    "@angular/platform-browser": "^19.2.0",
+    "@angular/platform-browser-dynamic": "^19.2.0",
+    "@angular/platform-server": "^19.2.0",
+    "@angular/router": "^19.2.0",
+    "@angular/ssr": "^19.2.5",
+    "@ng-icons/core": "^29.10.0",
+    "@ng-icons/lucide": ">=29.0.0",
+    "@spartan-ng/brain": "^0.0.1-alpha.450",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "embla-carousel-angular": "19.0.0",
+    "express": "^4.18.2",
+    "marked": "^15.0.7",
+    "ngx-markdown": "^19.1.1",
+    "ngx-scrollbar": ">=16.0.0",
+    "ngx-sonner": "^3.0.0",
+    "postcss": "^8.5.3",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^19.2.5",
+    "@angular/cli": "^19.2.5",
+    "@angular/compiler-cli": "^19.2.0",
+    "@ngx-env/builder": "^19.0.4",
+    "@spartan-ng/cli": "^0.0.1-alpha.433",
+    "@types/express": "^4.17.17",
+    "@types/jasmine": "~5.1.0",
+    "@types/node": "^18.18.0",
+    "jasmine-core": "~5.6.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "tailwind-merge": "^2.2.0",
+    "tailwindcss": "^3.4.17",
+    "tailwindcss-animate": "^1.0.6",
+    "typescript": "~5.7.2"
+  },
+  "volta": {
+    "node": "22.16.0"
+  }
+}
 ````
 
 ## File: src/ui/src/app/chat-conversation/chat-conversation.service.ts
