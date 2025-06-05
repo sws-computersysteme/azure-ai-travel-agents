@@ -96,8 +96,8 @@ git clone https://github.com/Azure-Samples/azure-ai-travel-agents.git
 ```bash
 git clone git@github.com:Azure-Samples/azure-ai-travel-agents.git
 ```
-
 </details>
+
 <br>
 <details>
   <summary>Using GitHub CLI</summary>
@@ -119,12 +119,16 @@ cd azure-ai-travel-agents
 ```shell
 azd auth login
 ```
+<details>
+  <summary>For GitHub Codespaces users</summary>
 
-For GitHub Codespaces users, if the previous command fails, try:
+If the previous command fails, try:
 
 ```shell
 azd auth login --use-device-code
 ```
+</details>
+<br>
 
 4. Provision the Azure resources:
 
