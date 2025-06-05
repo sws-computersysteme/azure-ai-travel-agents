@@ -122,11 +122,9 @@ azd auth login --use-device-code
 azd provision
 ```
 
-When asked, enter a name that will be used for the resource group.
-This will create a new folder in the `.azure` folder, and set it as the active environment for any calls to `azd` going forward.
-This will also install the necessary dependencies for the UI and API services, and build the Docker images for the agents.
+When asked, enter a name that will be used for the resource group. **Depending on the region you choose and the available resources and quotas, you may encouter provisioning errors. If this happens, please read our troubleshooting guide in the [Advanced Setup](docs/advanced-setup.md) documentation.**
 
-5. Open a new terminal and run the following command to start the API:
+1. Open a new terminal and run the following command to start the API:
 
 ```bash
 npm start --prefix=src/api
@@ -199,7 +197,7 @@ The resource group and all the resources will be deleted.
 
 ## Advanced Setup
 
-To run the application in a more advanced local setup or deploy to Azure, please refer to the [Advanced Setup](docs/advanced-setup.md) documentation. This includes setting up the Azure Container Apps environment, using local LLM providers, configuring the services, and deploying the application to Azure.
+To run the application in a more advanced local setup or deploy to Azure, please refer to the troubleshooting guide in the [Advanced Setup](docs/advanced-setup.md) documentation. This includes setting up the Azure Container Apps environment, using local LLM providers, configuring the services, and deploying the application to Azure.
 
 ## Join the Community
 

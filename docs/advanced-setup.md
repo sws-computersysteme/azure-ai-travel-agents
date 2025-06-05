@@ -156,6 +156,27 @@ A: Your service may have failed to start, or it may be missing some configuratio
 5. Observe the log outputs from Console log stream and System log stream to identify any errors.
 6. If logs are written to disk, use *Console* in the navigation to connect to a shell within the running container.
 
+Q: I tried to provision or deploy the application, but it failed with an error.
+
+```
+Deployment Error Details:
+InvalidTemplateDeployment: The template deployment 'openai' is not valid according to the validation procedure. The tracking id is 'xxxxxxxx-xxx-xxxx-xxxx-xxxxxxxxxxxx'. See inner errors for details.
+SpecialFeatureOrQuotaIdRequired: The subscription does not have QuotaId/Feature required by SKU 'S0' from kind 'AIServices' or contains blocked QuotaId/Feature.
+```
+
+A: This error indicates that the Azure OpenAI service is not available in your subscription or region. To resolve this, you can either:
+
+1. Request access to the Azure OpenAI service by following the instructions in the [Azure OpenAI Service documentation](https://learn.microsoft.com/en-us/azure/ai-services/openai/quotas-limits?tabs=REST#regional-quota-capacity-limits).
+2. Change the Azure OpenAI service SKU to a different one that is available in your subscription or region. You can do this by updating the `location` (or `AZURE_LOCATION`) parameter in the `main.parameters.json` file under the `infra` folder.
+3. If you are using a free Azure subscription, consider upgrading to a paid subscription that supports the Azure OpenAI service.
+
+Q: I deployed the application, but the UI is not loading or showing errors.
+
+A: This could be due to several reasons, such as misconfigured environment variables, network issues, or service dependencies not being available. To troubleshoot:
+
+1. Check the logs of the UI service in Azure Portal to see if there are any errors or warnings.
+2. Ensure that all required environment variables are set correctly in the Azure Portal under the Container App settings.
+3. Verify that all dependent services (like the API, customer query, etc.) are running and accessible.
 For more troubleshooting information, visit [Container Apps troubleshooting](https://learn.microsoft.com/azure/container-apps/troubleshooting). 
 
 ### Additional information
