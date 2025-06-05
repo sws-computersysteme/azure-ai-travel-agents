@@ -56,22 +56,26 @@ MCP_CUSTOMER_QUERY_URL=http://tool-customer-query:8080
 Ensure you have the following installed before running the application:
 - **[Docker](https://www.docker.com/)**
 
-### Start the application
+### Running the MCP servers in a containerized environment
 
-To run the entire application, run the following command to build and run all the services defined in the `src/docker-compose.yml` file.
+The included MCP servers are built using various technologies, such as Node.js, Python, and .NET. Each service has its own Dockerfile and is configured to run in a containerized environment.
+
+To build and start all MCP servers containers (defined in the `src/docker-compose.yml` file), run the following command:
 
 ```sh
-cd ./src
-docker compose up --build
+docker compose -f src/docker-compose.yml up --build -d
 ```
 
-This command will build and start all the services defined in the `docker-compose.yml` file.
+This command will build and start all the services defined in the `docker-compose.yml` file, including the UI and API services.
+
+If you want to run the MCP servers containers only, you can use the following command:
+
+```sh
+docker compose -f src/docker-compose.yml up --build -d --no-deps customer-query destination-recommendation itinerary-planning echo-ping
+```
 
 Alternatively, if you're in VS Code you can use the **Run Task** command (Ctrl+Shift+P) and select the `Run AI Travel Agents` task.
 
-Once all services are up and running, you can:
-- Access the **UI** at `http://localhost:4200`.
-- View the traces via the [Aspire Dashboard](https://aspiredashboard.com/) at http://localhost:18888. On `Structured` tab you'll see the logging messages from the **tool-echo-ping** and **api** services. The `Traces` tab will show the traces across the services, such as the call from **api** to **echo-agent**.
 
 >[!IMPORTANT]
 > When running the application in a containerized environment, you will not be able to make changes to the code and see them reflected in the running services. You will need to rebuild the containers using `docker compose up --build` to see any changes. This is because the code is copied into the container during the build process, and any changes made to the code on your local machine will not be reflected in the container unless you rebuild it.

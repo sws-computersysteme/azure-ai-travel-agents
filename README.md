@@ -9,7 +9,7 @@
 [![Announcement blog post](https://img.shields.io/badge/Announcement%20Blog%20post-black?style=flat-square)](https://techcommunity.microsoft.com/blog/AzureDevCommunityBlog/introducing-azure-ai-travel-agents-a-flagship-mcp-powered-sample-for-ai-travel-s/4416683)
 <br>
 [![Open project in GitHub Codespaces](https://img.shields.io/badge/Codespaces-Open-blue?style=flat-square&logo=github)](https://codespaces.new/Azure-Samples/azure-ai-travel-agents?hide_repo_select=true&ref=main&quickstart=true)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/Azure-Samples/azure-ai-travel-agents/build-test.yaml?style=flat-square&label=Build)](https://github.com/Azure-Samples/azure-ai-travel-agents/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/Azure-Samples/azure-ai-travel-agents/build.yaml?style=flat-square&label=Build)](https://github.com/Azure-Samples/azure-ai-travel-agents/actions)
 ![Node version](https://img.shields.io/badge/Node.js->=22-3c873a?style=flat-square)
 [![TypeScript](https://img.shields.io/badge/TypeScript-blue?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Java](https://img.shields.io/badge/Java-yellow?style=flat-square&logo=java&logoColor=white)](https://www.java.com)
@@ -81,23 +81,32 @@ To run and preview the application locally, follow these steps:
 
 1. Clone the repository:
 
-**Using HTTPS**:
+<details open>
+  <summary>Using HTTPS</summary>
 
 ```bash
 git clone https://github.com/Azure-Samples/azure-ai-travel-agents.git
 ```
 
-**Using SSH**:
+</details>
+<br>
+<details>
+  <summary>Using SSH</summary>
 
 ```bash
 git clone git@github.com:Azure-Samples/azure-ai-travel-agents.git
 ```
 
-**Using GitHub CLI**
+</details>
+<br>
+<details>
+  <summary>Using GitHub CLI</summary>
 
 ```bash
 gh repo clone Azure-Samples/azure-ai-travel-agents
 ```
+</details>
+<br>
 
 2. Navigate to the cloned repository:
 
@@ -137,7 +146,10 @@ npm start --prefix=src/api
 npm start --prefix=src/ui
 ```
 
-7. Navigate to the UI in your web browser at `http://localhost:4200`.
+7. Once all services are up and running, you can:
+- Access the **UI** at http://localhost:4200.
+- View the traces via the [Aspire Dashboard](https://aspiredashboard.com/) at http://localhost:18888. 
+  - On `Structured` tab you'll see the logging messages from the **tool-echo-ping** and **api** services. The `Traces` tab will show the traces across the services, such as the call from **api** to **echo-agent**.
 
 ![UI Screenshot](docs/azure-ai-travel-agent-demo-1.png)
 
