@@ -216,6 +216,10 @@ The resource group and all the resources will be deleted.
 
 To run the application in a more advanced local setup or deploy to Azure, please refer to the troubleshooting guide in the [Advanced Setup](docs/advanced-setup.md) documentation. This includes setting up the Azure Container Apps environment, using local LLM providers, configuring the services, and deploying the application to Azure.
 
+## Contributing
+
+We welcome contributions to the AI Travel Agents project! If you have suggestions, bug fixes, or new features, please feel free to submit a pull request. For more information on contributing, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
 ## Join the Community
 
 We encourage you to join our Azure AI Foundry Developer Community​ to share your experiences, ask questions, and get support:
@@ -223,6 +227,7 @@ We encourage you to join our Azure AI Foundry Developer Community​ to share yo
 - [aka.ms/foundry/discord​](https://aka.ms/foundry/discord) - Join our Discord community for real-time discussions and support.
 - [aka.ms/foundry/forum](https://aka.ms/foundry/forum) - Visit our Azure AI Foundry Developer Forum to ask questions and share your knowledge.
 
-## Contributing
+<div align="center">
+  <img src="./docs/ai-foundry-developer-community-cta.png" alt="Join us on Discord" width="1000px" />
+</div>
 
-We welcome contributions to the AI Travel Agents project! If you have suggestions, bug fixes, or new features, please feel free to submit a pull request. For more information on contributing, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file.
