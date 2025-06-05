@@ -187,7 +187,7 @@ However, you can use the [Azure pricing calculator](https://azure.com/e/10e328d3
 ⚠️ To avoid unnecessary costs, remember to take down your app if it's no longer in use,
 either by deleting the resource group in the Portal or running `azd down --purge` (see [Clean up](#clean-up)).
 
-#### Deploy the sample
+## Deploy the sample
 
 1. Open a terminal and navigate to the root of the project.
 2. Authenticate with Azure by running `azd auth login`.
@@ -203,7 +203,7 @@ The deployment process will take a few minutes. Once it's done, you'll see the U
 
 You can now open the web app in your browser and start chatting with the bot.
 
-#### Clean up
+## Clean up
 
 To clean up all the Azure resources created by this sample:
 
