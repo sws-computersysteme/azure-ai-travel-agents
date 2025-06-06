@@ -1,8 +1,12 @@
-module.exports = {
-  title: "Azure AI Travel Agents",
-  description:
-    "Technical Documentation for Azure AI Travel Agents - Intelligent Travel Planning System",
+import { defineUserConfig } from "vuepress";
+import { viteBundler } from "@vuepress/bundler-vite";
+import { defaultTheme } from "@vuepress/theme-default";
+import { mdEnhancePlugin } from "vuepress-plugin-md-enhance";
 
+export default defineUserConfig({
+  base: "/azure-ai-travel-agents/",
+  title: "Azure AI Travel Agents",
+  description: "Documentation for Azure AI Travel Agents",
   head: [
     ["link", { rel: "icon", href: "/ai-travel-agents-logo.png" }],
     ["meta", { name: "theme-color", content: "#0078d4" }],
@@ -12,11 +16,10 @@ module.exports = {
       { name: "apple-mobile-web-app-status-bar-style", content: "black" },
     ],
   ],
-
-  // Base URL for GitHub Pages
-  base: "/azure-ai-travel-agents/",
-
-  themeConfig: {
+  bundler: viteBundler({
+    // vite bundler options here
+  }),
+  theme: defaultTheme({
     logo: "/ai-travel-agents-logo.png",
 
     nav: [
@@ -99,7 +102,14 @@ module.exports = {
     // Search configuration
     search: true,
     searchMaxSuggestions: 10,
-  },
+  }),
 
-  plugins: ["@vuepress/plugin-back-to-top", "@vuepress/plugin-medium-zoom"],
-};
+  plugins: [
+    "@vuepress/plugin-back-to-top",
+    "@vuepress/plugin-medium-zoom",
+    mdEnhancePlugin({
+      // Enable mermaid
+      mermaid: true,
+    }),
+  ],
+});
