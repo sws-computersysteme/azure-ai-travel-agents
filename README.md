@@ -58,7 +58,7 @@ The architecture of the AI Travel Agents application is designed to be modular a
 </div>
 
 > [!NOTE]
-> Are you new to the Model Context Protocol (MCP)? Check out our free [MCP for Beginners](https://github.com/microsoft/mcp-for-beginners) guide.
+> New to the Model Context Protocol (MCP)? Check out our free [MCP for Beginners](https://github.com/microsoft/mcp-for-beginners) guide.
 
 ## Features
 - Multiple AI agents (each with its own specialty)
