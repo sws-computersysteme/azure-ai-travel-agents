@@ -1,161 +1,173 @@
-# Azure AI Travel Agents - Technical Documentation
+# Getting Started
 
-This directory contains comprehensive technical documentation for architects, developers, and system administrators working with the Azure AI Travel Agents system.
+Welcome to the Azure AI Travel Agents sample application! This project demonstrates how: 
+- To build a multi-agent system using Azure AI Foundry services and LlamaIndex.TS.
+- To implement various Model Context Protocol (MCP) servers in different programming languages.
+- To provision and deploy the application to Azure using the Azure Developer CLI (azd).
 
-## 📋 Documentation Overview
+## Prerequisites
 
-### Architecture & Design
-- **[Technical Architecture](./technical-architecture.md)** - Complete system architecture, components, and design patterns
-- **[Data Flow & Sequence Diagrams](./flow-diagrams.md)** - Visual representations of request flows and component interactions
+In order to run the application, ensure you have the following installed before running the application:
 
-### Implementation Guides
-- **[MCP Server Implementation](./mcp-servers.md)** - Detailed guide for Model Context Protocol servers across multiple languages
-- **[API Documentation](./api-documentation.md)** - Complete REST API reference with examples and integration patterns
-- **[Development Guide](./development-guide.md)** - Comprehensive developer onboarding and contribution guide
+- **[Azure Developer CLI](https://aka.ms/azure-dev/install)**
+- **[Docker](https://www.docker.com/)** (v4.41.2 or later)
+- **[Git](https://git-scm.com/downloads)**
+- **[Node.js](https://nodejs.org/en/download)** (for the UI and API services)
+- **[Powershell 7+ (pwsh)](https://github.com/powershell/powershell)** - For Windows users only.
+  - **Important**: Ensure you can run `pwsh.exe` from a PowerShell terminal. If this fails, you likely need to upgrade PowerShell.
 
-### Operations & Deployment
-- **[Deployment Architecture](./deployment-architecture.md)** - Infrastructure, deployment strategies, and production configurations
+## Preview the application locally
 
-## 🏗️ System Architecture Overview
+To run and preview the application locally, follow these steps:
 
-The Azure AI Travel Agents system is built on a microservices architecture using:
+1. Clone the repository:
 
-- **Frontend**: Angular UI with real-time streaming
-- **API Gateway**: Express.js with LlamaIndex.TS orchestration
-- **MCP Servers**: 7 specialized services in TypeScript, C#, Java, and Python
-- **AI Services**: Azure OpenAI and custom model inference
-- **Monitoring**: OpenTelemetry with Aspire Dashboard
-- **Deployment**: Docker containers on Azure Container Apps
+<details open>
+  <summary>Using HTTPS</summary>
 
-```
-┌─────────────┐    ┌─────────────┐    ┌─────────────────────┐
-│ Angular UI  │───▶│ Express API │───▶│ LlamaIndex.TS       │
-│             │    │             │    │ Orchestrator        │
-└─────────────┘    └─────────────┘    └──────────┬──────────┘
-                                                  │
-                           ┌──────────────────────┼──────────────────────┐
-                           │                      │                      │
-                    ┌──────▼──────┐    ┌─────────▼────────┐    ┌────────▼────────┐
-                    │ Customer    │    │ Destination      │    │ Itinerary       │
-                    │ Query       │    │ Recommendation   │    │ Planning        │
-                    │ (C#/.NET)   │    │ (Java)           │    │ (Python)        │
-                    └─────────────┘    └──────────────────┘    └─────────────────┘
+```bash
+git clone https://github.com/Azure-Samples/azure-ai-travel-agents.git
 ```
 
-## 🚀 Quick Start for Different Roles
+</details>
+<br>
+<details>
+  <summary>Using SSH</summary>
 
-### For Architects
-1. Start with [Technical Architecture](./technical-architecture.md) for system overview
-2. Review [Deployment Architecture](./deployment-architecture.md) for infrastructure planning
-3. Examine [Flow Diagrams](./flow-diagrams.md) for interaction patterns
+```bash
+git clone git@github.com:Azure-Samples/azure-ai-travel-agents.git
+```
+</details>
 
-### For Developers
-1. Follow [Development Guide](./development-guide.md) for environment setup
-2. Study [MCP Server Implementation](./mcp-servers.md) for service development
-3. Reference [API Documentation](./api-documentation.md) for integration
+<br>
+<details>
+  <summary>Using GitHub CLI</summary>
 
-### For DevOps/Operations
-1. Review [Deployment Architecture](./deployment-architecture.md) for deployment strategies
-2. Check monitoring sections in [Technical Architecture](./technical-architecture.md)
-3. Follow production deployment guides
+```bash
+gh repo clone Azure-Samples/azure-ai-travel-agents
+```
+</details>
+<br>
 
-## 🔧 Key Technologies
+2. Navigate to the cloned repository:
 
-| Component | Technology | Purpose |
-|-----------|------------|---------|
-| **Frontend** | Angular 19, TypeScript, Tailwind CSS | User interface and real-time chat |
-| **API Server** | Node.js, Express.js, LlamaIndex.TS | Agent orchestration and API gateway |
-| **MCP Servers** | Multi-language (TS, C#, Java, Python) | Specialized AI tool implementations |
-| **AI Services** | Azure OpenAI, ONNX, vLLM | Language models and inference |
-| **Monitoring** | OpenTelemetry, Aspire Dashboard | Observability and tracing |
-| **Deployment** | Docker, Azure Container Apps | Containerization and hosting |
+```bash
+cd azure-ai-travel-agents
+```
 
-## 📊 System Capabilities
+3. Login to your Azure account:
 
-- **Multi-Agent Orchestration**: Coordinated AI agents for complex travel planning
-- **Real-time Streaming**: Server-Sent Events for live response updates
-- **Polyglot Architecture**: MCP servers in multiple programming languages
-- **Scalable Deployment**: Azure Container Apps with auto-scaling
-- **Comprehensive Monitoring**: Distributed tracing and metrics collection
-- **Extensible Design**: Easy addition of new AI tools and capabilities
+```shell
+azd auth login
+```
+<details>
+  <summary>For GitHub Codespaces users</summary>
 
-## 🔍 Documentation Features
+If the previous command fails, try:
 
-Each documentation file includes:
+```shell
+azd auth login --use-device-code
+```
+</details>
+<br>
 
-- **Detailed Code Examples**: Copy-paste ready implementations
-- **Architecture Diagrams**: Visual system representations
-- **Configuration Templates**: Ready-to-use configurations
-- **Troubleshooting Guides**: Common issues and solutions
-- **Performance Guidelines**: Optimization best practices
-- **Security Considerations**: Production-ready security patterns
+4. Provision the Azure resources:
 
-## 📖 Document Structure
+```bash
+azd provision
+```
 
-### Technical Architecture
-- System overview and design principles
-- Component specifications and interactions
-- Data models and API contracts
-- Development and extension guides
+When asked, enter a name that will be used for the resource group. **Depending on the region you choose and the available resources and quotas, you may encouter provisioning errors. If this happens, please read our troubleshooting guide in the [Advanced Setup](advanced-setup.md) documentation.**
 
-### Flow Diagrams
-- Request/response flow patterns
-- Agent interaction sequences
-- Error handling and recovery flows
-- Real-time communication patterns
+1. Open a new terminal and run the following command to start the API:
 
-### MCP Servers
-- Protocol specifications and implementations
-- Server-specific guides for each language
-- Tool development and integration patterns
-- Performance and scaling considerations
+```bash
+npm start --prefix=src/api
+```
 
-### API Documentation
-- Complete endpoint reference
-- Request/response schemas
-- Authentication and security
-- Client libraries and SDKs
+6. Open a new terminal and run the following command to start the UI:
 
-### Deployment Architecture
-- Infrastructure as Code templates
-- Environment-specific configurations
-- Monitoring and observability setup
-- Production deployment strategies
+```bash
+npm start --prefix=src/ui
+```
 
-### Development Guide
-- Environment setup and tooling
-- Coding standards and conventions
-- Testing strategies and frameworks
-- Contributing guidelines and workflows
+7. Once all services are up and running, you can:
+- Access the **UI** at http://localhost:4200.
+- View the traces via the [Aspire Dashboard](https://aspiredashboard.com/) at http://localhost:18888. 
+  - On `Structured` tab you'll see the logging messages from the **tool-echo-ping** and **api** services. The `Traces` tab will show the traces across the services, such as the call from **api** to **echo-agent**.
 
-## 🎯 Use Cases
+![UI Screenshot](azure-ai-travel-agent-demo-1.png)
 
-This documentation supports:
+⚠️ In case you encounter issues when starting either the API or UI, try running `azd hooks run postprovision` to force run the post-provisioning hooks. This is due to an issue with the `azd provision` command not executing the post-provisioning hooks automatically, in some cases, the first time you run it.
 
-- **System Architecture Planning**: Understanding component relationships and data flows
-- **Development Onboarding**: Getting new developers productive quickly
-- **Production Deployment**: Reliable, scalable infrastructure deployment
-- **System Extension**: Adding new features and capabilities
-- **Troubleshooting**: Diagnosing and resolving system issues
-- **Performance Optimization**: Improving system performance and efficiency
+### Use GitHub Codespaces
 
-## 💡 Getting Help
+You can run this project directly in your browser by using GitHub Codespaces, which will open a web-based VS Code:
 
-- **For Architecture Questions**: Review [Technical Architecture](./technical-architecture.md)
-- **For Development Issues**: Check [Development Guide](./development-guide.md)
-- **For Deployment Problems**: See [Deployment Architecture](./deployment-architecture.md)
-- **For API Integration**: Reference [API Documentation](./api-documentation.md)
-- **For MCP Development**: Study [MCP Server Implementation](./mcp-servers.md)
+[![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=blue&logo=github)](https://codespaces.new/Azure-Samples/azure-ai-travel-agents?hide_repo_select=true&ref&quickstart=true)
 
-## 🔄 Documentation Updates
+### Use a VSCode dev container
 
-This documentation is maintained alongside the codebase. When contributing:
+A similar option to Codespaces is VS Code Dev Containers, that will open the project in your local VS Code instance using the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
 
-1. Update relevant documentation with code changes
-2. Add examples for new features
-3. Update diagrams for architectural changes
-4. Maintain consistency across all documents
+You will also need to have [Docker](https://www.docker.com/products/docker-desktop) installed on your machine to run the container.
 
----
+[![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/Azure-Samples/azure-ai-travel-agents)
 
-*This documentation reflects the current state of the Azure AI Travel Agents system and is updated regularly to maintain accuracy and completeness.*
+## Cost estimation
+
+Pricing varies per region and usage, so it isn't possible to predict exact costs for your usage.
+However, you can use the [Azure pricing calculator](https://azure.com/e/10e328d3aa074a5089a5ae6c1fb65ba9) for the resources below to get an estimate.
+
+- Azure Container Apps: Consumption plan, Free for the first 2M executions. Pricing per execution and memory used. [Pricing](https://azure.microsoft.com/pricing/details/container-apps/)
+- Azure Container Registry: Free for the first 2GB of storage. Pricing per GB stored and per GB data transferred. [Pricing](https://azure.microsoft.com/pricing/details/container-registry/)
+- Azure OpenAI: Standard tier, GPT model. Pricing per 1K tokens used, and at least 1K tokens are used per query. [Pricing](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/)
+- Azure Monitor: Free for the first 5GB of data ingested. Pricing per GB ingested after that. [Pricing](https://azure.microsoft.com/pricing/details/monitor/)
+
+⚠️ To avoid unnecessary costs, remember to take down your app if it's no longer in use,
+either by deleting the resource group in the Portal or running `azd down --purge` (see [Clean up](#clean-up)).
+
+## Deploy the sample
+
+1. Open a terminal and navigate to the root of the project.
+2. Authenticate with Azure by running `azd auth login`.
+3. Run `azd up` to deploy the application to Azure. This will provision Azure resources, deploy this sample, with all the containers, and set up the necessary configurations.
+   - You will be prompted to select a base location for the resources. If you're unsure of which location to choose, select `swedencentral`.
+   - By default, the OpenAI resource will be deployed to `swedencentral`. You can set a different location with `azd env set AZURE_LOCATION <location>`. Currently only a short list of locations is accepted. That location list is based on the [OpenAI model availability table](https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions) and may become outdated as availability changes.
+
+The deployment process will take a few minutes. Once it's done, you'll see the URL of the web app in the terminal.
+
+<div align="center">
+  <img src="./azd-up.png" alt="Screenshot of the azd up command result" width="600px" />
+</div>
+
+You can now open the web app in your browser and start chatting with the bot.
+
+## Clean up
+
+To clean up all the Azure resources created by this sample:
+
+1. Run `azd down --purge`
+2. When asked if you are sure you want to continue, enter `y`
+
+The resource group and all the resources will be deleted.
+
+## Advanced Setup
+
+To run the application in a more advanced local setup or deploy to Azure, please refer to the troubleshooting guide in the [Advanced Setup](advanced-setup.md) documentation. This includes setting up the Azure Container Apps environment, using local LLM providers, configuring the services, and deploying the application to Azure.
+
+## Contributing
+
+We welcome contributions to the AI Travel Agents project! If you have suggestions, bug fixes, or new features, please feel free to submit a pull request. For more information on contributing, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
+## Join the Community
+
+We encourage you to join our Azure AI Foundry Developer Community​ to share your experiences, ask questions, and get support:
+
+- [aka.ms/foundry/discord​](https://aka.ms/foundry/discord) - Join our Discord community for real-time discussions and support.
+- [aka.ms/foundry/forum](https://aka.ms/foundry/forum) - Visit our Azure AI Foundry Developer Forum to ask questions and share your knowledge.
+
+<div align="center">
+  <img src="./ai-foundry-developer-community-cta.png" alt="Join us on Discord" width="1000px" />
+</div>
+

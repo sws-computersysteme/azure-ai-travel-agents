@@ -49,12 +49,67 @@ MCP_CUSTOMER_QUERY_URL=http://tool-customer-query:8080
 > [!Note]
 > Adding the `- environment:` directive to the `docker-compose.yml` file will override the environment variables set in the `.env.*` files.
 
-## Preview the application in a containerized environment locally
+## Preview the application locally
 
-### Prerequisites
+### Using Local LLM Providers
 
-Ensure you have the following installed before running the application:
-- **[Docker](https://www.docker.com/)**
+If you want to use local LLM providers like [Docker models](https://docs.docker.com/ai/model-runner/), [Mistral](https://mistral.ai/) or [Llama](https://ai.meta.com/llama/), you can set the `LLM_PROVIDER` environment variable in the `./src/api/.env` file to the supported providers. This will configure the application to use the specified local LLM provider.
+
+The application supports the following local LLM providers:
+- **Azure Foundry Local**: This provider allows you to run models locally using Azure's AI Foundry Local service.
+- **Ollama Models**: This provider allows you to run models locally using Ollama service.
+- **Docker Models**: This provider allows you to run models locally using Docker's Model Runner service.
+  - Make sure to install Docker Desktop v4.41.2 or later to use this feature (docker engine 4.41.2 or later).
+
+To use a local LLM provider, you need to set the `LLM_PROVIDER` environment variable in the `./src/api/.env` file, and provde the necessary configuration for the provider you want to use.
+
+#### Using Azure Foundry Local
+
+Before using Azure Foundry Local, ensure you have the [Azure AI Foundry Local](https://github.com/microsoft/Foundry-Local) installed and running. You can find a list of available models by running the following command in your terminal: 
+
+```bash
+foundry model list
+```
+
+Then set the following environment variables in your `./src/api/.env` file:
+
+```bash
+LLM_PROVIDER=foundry-local
+AZURE_FOUNDRY_LOCAL_MODEL_ALIAS=phi-4-mini-reasoning
+```
+
+#### Using Docker Models
+Before using Docker Models, ensure you have the [Docker Model Runner](https://docs.docker.com/ai/model-runner/) installed and running. You can find a list of available models by running the following command in your terminal:
+
+```bash
+docker model list
+```
+
+Then set the following environment variables in your `./src/api/.env` file:
+
+```bash
+LLM_PROVIDER=docker-models
+# DOCKER_MODEL_ENDPOINT=http://model-runner.docker.internal/engines/llama.cpp/v1
+# Use the following endpoint if you are running the model runner locally (default port is 12434)
+DOCKER_MODEL_ENDPOINT=http://localhost:12434/engines/llama.cpp/v1
+DOCKER_MODEL=ai/smollm2
+```
+
+#### Using Ollama Models
+
+Before using Ollama Models, ensure you have the [Ollama](https://ollama.com/) installed and running. You can find a list of available models by running the following command in your terminal:
+
+```bash
+ollama list
+```
+
+Then set the following environment variables in your `./src/api/.env` file:
+
+```bash
+LLM_PROVIDER=ollama-models
+OLLAMA_MODEL_ENDPOINT=http://localhost:11434/v1
+OLLAMA_MODEL=llama3.1
+```
 
 ### Running the MCP servers in a containerized environment
 
@@ -182,6 +237,10 @@ A: This could be due to several reasons, such as misconfigured environment varia
 2. Ensure that all required environment variables are set correctly in the Azure Portal under the Container App settings.
 3. Verify that all dependent services (like the API, customer query, etc.) are running and accessible.
 For more troubleshooting information, visit [Container Apps troubleshooting](https://learn.microsoft.com/azure/container-apps/troubleshooting). 
+
+Q: Error: FunctionAgent must have at least one tool
+
+A: This error indicates that your MCP servers are not running. Ensure that you have started the MCP servers using the `docker compose up` command as described in the [Running the MCP servers in a containerized environment](#running-the-mcp-servers-in-a-containerized-environment) section. If the services are running, check their logs for any errors or issues that might prevent them from functioning correctly.
 
 ### Additional information
 
