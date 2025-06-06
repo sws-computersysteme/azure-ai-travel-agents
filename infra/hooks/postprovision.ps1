@@ -122,6 +122,9 @@ foreach ($tool in $tools) {
     }
 }
 
+# Enable Docker Desktop Model Runner
+docker desktop enable model-runner --tcp 12434
+
 # Only build docker compose, do not start the containers yet
 Write-Host ">> Building MCP servers with Docker Compose..."
 $toolServices = $tools | ForEach-Object { "tool-$_" } | Join-String -Separator ' '

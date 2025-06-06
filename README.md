@@ -69,7 +69,7 @@ The architecture of the AI Travel Agents application is designed to be modular a
 Ensure you have the following installed before running the application:
 
 - **[Azure Developer CLI](https://aka.ms/azure-dev/install)**
-- **[Docker](https://www.docker.com/)**
+- **[Docker](https://www.docker.com/)** (v4.41.2 or later)
 - **[Git](https://git-scm.com/downloads)**
 - **[Node.js](https://nodejs.org/en/download)** (for the UI and API services)
 - **[Powershell 7+ (pwsh)](https://github.com/powershell/powershell)** - For Windows users only.

@@ -89,3 +89,9 @@ services:
       - 4317:18889
     environment:
       - DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
+
+  llm:
+    provider:
+      type: model
+      options:
+        model: ${DOCKER_MODEL}

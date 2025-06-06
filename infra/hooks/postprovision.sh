@@ -121,6 +121,9 @@ for tool in $tools; do
     fi
 done
 
+# Enable Docker Desktop Model Runner
+docker desktop enable model-runner --tcp 12434
+
 #  only build docker compose, do not start the containers yet
 echo ">> Building MCP servers with Docker Compose..."
 docker compose -f src/docker-compose.yml up --build -d $(echo $tools | sed 's/\([^ ]*\)/tool-\1/g')
