@@ -1,3 +1,8 @@
+---
+title: deployment-architecture
+createTime: 2025/06/06 13:07:02
+permalink: /article/hrj3bxyz/
+---
 # Deployment Architecture Guide
 
 This document provides comprehensive guidance on deploying the Azure AI Travel Agents system across different environments, from local development to production Azure Container Apps deployments.

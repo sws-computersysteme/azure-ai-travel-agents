@@ -1,3 +1,8 @@
+---
+title: VUEPRESS
+createTime: 2025/06/06 13:07:02
+permalink: /article/r74qb60p/
+---
 # VuePress Documentation Site
 
 This directory contains the VuePress-based documentation website for Azure AI Travel Agents.

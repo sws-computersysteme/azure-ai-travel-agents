@@ -1,3 +1,8 @@
+---
+title: technical-architecture
+createTime: 2025/06/06 13:07:02
+permalink: /article/x6imesvj/
+---
 # Technical Architecture Documentation
 
 ## Table of Contents

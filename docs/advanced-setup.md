@@ -1,3 +1,8 @@
+---
+title: advanced-setup
+createTime: 2025/06/05 23:48:49
+permalink: /article/vlrc2vxp/
+---
 # Advanced Setup
 
 This section provides advanced setup instructions for running the application in a containerized environment using Docker. It is recommended to use the provided scripts for a smoother experience, but if you prefer to run the services manually, follow these steps.

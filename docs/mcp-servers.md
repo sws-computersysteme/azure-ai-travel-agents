@@ -1,3 +1,8 @@
+---
+title: mcp-servers
+createTime: 2025/06/06 13:07:02
+permalink: /article/6rbv3t1r/
+---
 # MCP Server Implementation Guide
 
 This document provides detailed technical documentation for each Model Context Protocol (MCP) server in the Azure AI Travel Agents system, including their architecture, APIs, and integration patterns.

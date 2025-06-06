@@ -1,3 +1,8 @@
+---
+title: api-documentation
+createTime: 2025/06/06 13:07:02
+permalink: /article/i6lgb8ks/
+---
 # API Documentation
 
 This document provides comprehensive API documentation for the Azure AI Travel Agents system, including all endpoints, request/response formats, authentication, and integration patterns.

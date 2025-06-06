@@ -1,3 +1,8 @@
+---
+title: flow-diagrams
+createTime: 2025/06/06 13:07:02
+permalink: /article/1ee6o8cy/
+---
 # Data Flow and Sequence Diagrams
 
 This document provides detailed flow diagrams and sequence diagrams to illustrate how requests flow through the Azure AI Travel Agents system, from the UI to the API, and through the AI agent integrations with MCP servers.
