@@ -7,53 +7,6 @@ permalink: /article/vlrc2vxp/
 
 This section provides advanced setup instructions for running the application in a containerized environment using Docker. It is recommended to use the provided scripts for a smoother experience, but if you prefer to run the services manually, follow these steps.
 
-## Environment Variables setup for containerized services
-
-The application uses environment variables to configure the services. You can set them in a `.env` file in the root directory or directly in your terminal. We recommend the following approach:
-
-1. Create a `.env` file for each containerized service under `src/`, and optionally a `.env.docker` file for Docker-specific configurations:
-    - `src/ui/.env`
-    - `src/ui/.env.docker`
-    - `src/api/.env`
-    - `src/api/.env.docker`
-    - `src/tools/customer-query/.env`
-    - `src/tools/customer-query/.env.docker`
-    - `src/tools/destination-recommendation/.env`
-    - `src/tools/destination-recommendation/.env.docker`
-    - `src/tools/itinerary-planning/.env`
-    - `src/tools/itinerary-planning/.env.docker`
-    - `src/tools/code-evaluation/.env`
-    - `src/tools/code-evaluation/.env.docker`
-    - `src/tools/model-inference/.env`
-    - `src/tools/model-inference/.env.docker`
-    - `src/tools/web-search/.env`
-    - `src/tools/web-search/.env.docker`
-    - `src/tools/echo-ping/.env`
-    - `src/tools/echo-ping/.env.docker`
-
-2. `.env.docker` files are used to set environment variables for Docker containers. These files should contain the same variables as `.env` files, but with values specific to the Docker environment. For example:
-  
-```bash
-# src/api/.env
-MCP_CUSTOMER_QUERY_URL=http://localhost:8080
-
-# src/api/.env.docker
-MCP_CUSTOMER_QUERY_URL=http://tool-customer-query:8080
-```
-
-3. Load the environment variable files in `docker-compose.yml` using the `env_file` directive, in the following order:
-```yml
-  web-api:
-    container_name: web-api
-    # ...
-    env_file: 
-      - "./api/.env"
-      - "./api/.env.docker" # override .env with .env.docker
-```
-
-> [!Note]
-> Adding the `- environment:` directive to the `docker-compose.yml` file will override the environment variables set in the `.env.*` files.
-
 ## Preview the application locally
 
 ### Using Local LLM Providers
@@ -139,6 +92,55 @@ Alternatively, if you're in VS Code you can use the **Run Task** command (Ctrl+S
 
 >[!IMPORTANT]
 > When running the application in a containerized environment, you will not be able to make changes to the code and see them reflected in the running services. You will need to rebuild the containers using `docker compose up --build` to see any changes. This is because the code is copied into the container during the build process, and any changes made to the code on your local machine will not be reflected in the container unless you rebuild it.
+
+
+## Environment Variables setup for containerized services
+
+The application uses environment variables to configure the services. You can set them in a `.env` file in the root directory or directly in your terminal. We recommend the following approach:
+
+1. Create a `.env` file for each containerized service under `src/`, and optionally a `.env.docker` file for Docker-specific configurations:
+    - `src/ui/.env`
+    - `src/ui/.env.docker`
+    - `src/api/.env`
+    - `src/api/.env.docker`
+    - `src/tools/customer-query/.env`
+    - `src/tools/customer-query/.env.docker`
+    - `src/tools/destination-recommendation/.env`
+    - `src/tools/destination-recommendation/.env.docker`
+    - `src/tools/itinerary-planning/.env`
+    - `src/tools/itinerary-planning/.env.docker`
+    - `src/tools/code-evaluation/.env`
+    - `src/tools/code-evaluation/.env.docker`
+    - `src/tools/model-inference/.env`
+    - `src/tools/model-inference/.env.docker`
+    - `src/tools/web-search/.env`
+    - `src/tools/web-search/.env.docker`
+    - `src/tools/echo-ping/.env`
+    - `src/tools/echo-ping/.env.docker`
+
+2. `.env.docker` files are used to set environment variables for Docker containers. These files should contain the same variables as `.env` files, but with values specific to the Docker environment. For example:
+  
+```bash
+# src/api/.env
+MCP_CUSTOMER_QUERY_URL=http://localhost:8080
+
+# src/api/.env.docker
+MCP_CUSTOMER_QUERY_URL=http://tool-customer-query:8080
+```
+
+3. Load the environment variable files in `docker-compose.yml` using the `env_file` directive, in the following order:
+```yml
+  web-api:
+    container_name: web-api
+    # ...
+    env_file: 
+      - "./api/.env"
+      - "./api/.env.docker" # override .env with .env.docker
+```
+
+> [!Note]
+> Adding the `- environment:` directive to the `docker-compose.yml` file will override the environment variables set in the `.env.*` files.
+
 
 ## Deploy to Azure
 
