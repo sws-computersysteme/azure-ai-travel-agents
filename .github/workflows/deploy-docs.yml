@@ -37,7 +37,9 @@ jobs:
       - name: Install dependencies
         run: |
           cd docs
-          npm ci
+          # do not use `npm ci`, as it will fail because package-lock.json is referencing 
+          # a version of @rollup/rollup-linux-x64-gnu binary that is not available on this os
+          npm install
 
       - name: Build documentation
         run: |

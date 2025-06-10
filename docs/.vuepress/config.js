@@ -5,6 +5,11 @@ import { mdEnhancePlugin } from "vuepress-plugin-md-enhance";
 import { searchPlugin } from "@vuepress/plugin-search";
 
 export default defineUserConfig({
+  preprocessorOptions: {
+    sass: {
+      api: "modern-compiler",
+    },
+  },
   base: "/azure-ai-travel-agents/",
   title: "Azure AI Travel Agents",
   description: "Documentation for Azure AI Travel Agents",
