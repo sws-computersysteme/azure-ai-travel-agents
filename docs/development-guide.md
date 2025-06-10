@@ -1451,7 +1451,7 @@ const result = await service.processData(input);
 
 ### Methods
 
-#### `processData(input: InputData): Promise<OutputData>`
+#### `processData(input: InputData): Promise&lt;OutputData&gt;`
 
 Processes the input data and returns the result.
 
@@ -1459,7 +1459,7 @@ Processes the input data and returns the result.
 - `input` (InputData): The data to process
 
 **Returns:**
-- Promise<OutputData>: The processed result
+- Promise&lt;OutputData&gt;: The processed result
 
 **Throws:**
 - `ValidationError`: When input is invalid
