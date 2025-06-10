@@ -1,3 +1,7 @@
+---
+title: getting-started
+createTime: 2025/06/06 13:07:02
+---
 # Getting Started
 
 Welcome to the Azure AI Travel Agents sample application! This project demonstrates how: 
@@ -71,7 +75,7 @@ azd auth login --use-device-code
 </details>
 <br>
 
-4. Provision the Azure resources:
+1. Provision the Azure resources. This is an important step that sets up an Azure AI Foundry environment:
 
 ```bash
 azd provision
@@ -151,6 +155,11 @@ To clean up all the Azure resources created by this sample:
 2. When asked if you are sure you want to continue, enter `y`
 
 The resource group and all the resources will be deleted.
+
+## Technical documentation
+
+For more detailed information about the architecture, components, and how the application works, please refer to the [Technical Documentation](./overview.md).
+
 
 ## Advanced Setup
 

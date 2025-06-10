@@ -7,7 +7,7 @@ permalink: /article/4qdayien/
 
 This directory contains comprehensive technical documentation for architects, developers, and system administrators working with the Azure AI Travel Agents system.
 
-## 📋 Documentation Overview
+## Documentation Overview
 
 ### Architecture & Design
 - **[Technical Architecture](./technical-architecture.md)** - Complete system architecture, components, and design patterns
@@ -21,12 +21,12 @@ This directory contains comprehensive technical documentation for architects, de
 ### Operations & Deployment
 - **[Deployment Architecture](./deployment-architecture.md)** - Infrastructure, deployment strategies, and production configurations
 
-## 🏗️ System Architecture Overview
+## System Architecture Overview
 
 The Azure AI Travel Agents system is built on a microservices architecture using:
 
 - **Frontend**: Angular UI with real-time streaming
-- **API Gateway**: Express.js with LlamaIndex.TS orchestration
+- **API Server**: Express.js with LlamaIndex.TS orchestration
 - **MCP Servers**: 7 specialized services in TypeScript, C#, Java, and Python
 - **AI Services**: Azure OpenAI and custom model inference
 - **Monitoring**: OpenTelemetry with Aspire Dashboard
@@ -47,7 +47,7 @@ The Azure AI Travel Agents system is built on a microservices architecture using
                     └─────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
-## 🚀 Quick Start for Different Roles
+## Quick Start for Different Roles
 
 ### For Architects
 1. Start with [Technical Architecture](./technical-architecture.md) for system overview
@@ -64,7 +64,7 @@ The Azure AI Travel Agents system is built on a microservices architecture using
 2. Check monitoring sections in [Technical Architecture](./technical-architecture.md)
 3. Follow production deployment guides
 
-## 🔧 Key Technologies
+## Key Technologies
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
@@ -75,7 +75,7 @@ The Azure AI Travel Agents system is built on a microservices architecture using
 | **Monitoring** | OpenTelemetry, Aspire Dashboard | Observability and tracing |
 | **Deployment** | Docker, Azure Container Apps | Containerization and hosting |
 
-## 📊 System Capabilities
+## System Capabilities
 
 - **Multi-Agent Orchestration**: Coordinated AI agents for complex travel planning
 - **Real-time Streaming**: Server-Sent Events for live response updates
@@ -84,7 +84,7 @@ The Azure AI Travel Agents system is built on a microservices architecture using
 - **Comprehensive Monitoring**: Distributed tracing and metrics collection
 - **Extensible Design**: Easy addition of new AI tools and capabilities
 
-## 🔍 Documentation Features
+## Documentation Features
 
 Each documentation file includes:
 
@@ -95,7 +95,7 @@ Each documentation file includes:
 - **Performance Guidelines**: Optimization best practices
 - **Security Considerations**: Production-ready security patterns
 
-## 📖 Document Structure
+## Document Structure
 
 ### Technical Architecture
 - System overview and design principles
@@ -133,7 +133,7 @@ Each documentation file includes:
 - Testing strategies and frameworks
 - Contributing guidelines and workflows
 
-## 🎯 Use Cases
+## Use Cases
 
 This documentation supports:
 
@@ -144,7 +144,7 @@ This documentation supports:
 - **Troubleshooting**: Diagnosing and resolving system issues
 - **Performance Optimization**: Improving system performance and efficiency
 
-## 💡 Getting Help
+## Getting Help
 
 - **For Architecture Questions**: Review [Technical Architecture](./technical-architecture.md)
 - **For Development Issues**: Check [Development Guide](./development-guide.md)
@@ -152,7 +152,7 @@ This documentation supports:
 - **For API Integration**: Reference [API Documentation](./api-documentation.md)
 - **For MCP Development**: Study [MCP Server Implementation](./mcp-servers.md)
 
-## 🔄 Documentation Updates
+## Documentation Updates
 
 This documentation is maintained alongside the codebase. When contributing:
 
@@ -163,4 +163,4 @@ This documentation is maintained alongside the codebase. When contributing:
 
 ---
 
-*This documentation reflects the current state of the Azure AI Travel Agents system and is updated regularly to maintain accuracy and completeness.*
+*This documentation reflects the current state of the Azure AI Travel Agents system and is updated regularly to maintain accuracy and completeness. If you notice any discrepancies or have suggestions for improvement, please submit an issue or pull request on [GitHub](https://github.com/Azure-Samples/azure-ai-travel-agents/issues/).*

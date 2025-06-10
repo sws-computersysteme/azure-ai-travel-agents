@@ -172,7 +172,7 @@ This command will provision the necessary Azure resources and deploy the applica
 
 ### Configure environment variables for running services
 
-Configure environment variables for running services by updating `settings` in [main.parameters.json](../infra/main.parameters.json).
+Configure environment variables for running services by updating [main.parameters.json](../infra/main.parameters.json).
 
 ### Configure CI/CD pipeline
 
