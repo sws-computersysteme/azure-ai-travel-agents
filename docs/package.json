@@ -30,5 +30,8 @@
     "vue": "^3.5.13",
     "vuepress": "next",
     "vuepress-plugin-md-enhance": "^2.0.0-rc.90"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "*"
   }
 }
