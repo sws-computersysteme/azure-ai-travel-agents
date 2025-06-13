@@ -24,8 +24,6 @@ if [ ! -d .git ] || [ ! -f preview.sh ]; then
   git clone "$REPO_URL"
   cd "$REPO_DIR"
   exec bash preview.sh "$@"
-else
-  echo -e "${CYAN}Running setup in existing repository. Skipping clone.${NC}"
 fi
 
 # Step 0: Prerequisite checks
