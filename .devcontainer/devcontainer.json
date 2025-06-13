@@ -1,6 +1,6 @@
 {
-  "name": "AI Travel Agents",
-  "image": "mcr.microsoft.com/devcontainers/base:bullseye",
+  "name": "Azure AI Travel Agents",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
     "ghcr.io/devcontainers/features/azure-cli:1": {},
     "ghcr.io/azure/azure-dev/azd:0": {},
