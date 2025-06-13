@@ -5,13 +5,13 @@ permalink: /article/vlrc2vxp/
 ---
 # Advanced Setup
 
-This section provides advanced setup instructions for running the application in a containerized environment using Docker. It is recommended to use the provided scripts for a smoother experience, but if you prefer to run the services manually, follow these steps.
+This section provides advanced setup instructions for running the application either locally or in a containerized environment using Docker. It also covers how to deploy the application to Azure using the Azure Developer CLI (`azd`) and Bicep infrastructure-as-code configuration.
 
-## Preview the application locally
+## Preview the application
 
 ### Using Local LLM Providers
 
-If you want to use local LLM providers like [Docker models](https://docs.docker.com/ai/model-runner/), [Mistral](https://mistral.ai/) or [Llama](https://ai.meta.com/llama/), you can set the `LLM_PROVIDER` environment variable in the `./src/api/.env` file to the supported providers. This will configure the application to use the specified local LLM provider.
+If you want to use local LLM providers like [Docker models](https://docs.docker.com/ai/model-runner/) or [Llama](https://ai.meta.com/llama/), you can set the `LLM_PROVIDER` environment variable in the `./src/api/.env` file to the supported providers. This will configure the application to use the specified local LLM provider.
 
 The application supports the following local LLM providers:
 - **Azure Foundry Local**: This provider allows you to run models locally using Azure's AI Foundry Local service.
@@ -19,7 +19,38 @@ The application supports the following local LLM providers:
 - **Docker Models**: This provider allows you to run models locally using Docker's Model Runner service.
   - Make sure to install Docker Desktop v4.42.0 (195023) or later to use this feature (docker engine 28.2.2 or later).
 
-To use a local LLM provider, you need to set the `LLM_PROVIDER` environment variable in the `./src/api/.env` file, and provde the necessary configuration for the provider you want to use.
+We also recommend you [fork the repository](https://github.com/Azure-Samples/azure-ai-travel-agents/fork) to your own GitHub account so you can make changes and experiment with the code.
+
+<details open>
+  <summary>Using HTTPS</summary>
+
+```bash
+git clone https://github.com/YOUR-USERNAME/azure-ai-travel-agents.git
+```
+
+</details>
+<br>
+<details>
+  <summary>Using SSH</summary>
+
+```bash
+git clone git@github.com:YOUR-USERNAME/azure-ai-travel-agents.git
+```
+</details>
+
+<br>
+<details>
+  <summary>Using GitHub CLI</summary>
+
+```bash
+gh repo clone YOUR-USERNAME/azure-ai-travel-agents
+```
+</details>
+<br>
+
+To use a local LLM provider, you need to set the `LLM_PROVIDER` environment variable in the `./src/api/.env` file, and provide the necessary configuration for the provider you want to use.
+
+In order to run the application locally, you need to clone the repository and run the preview script. This will set up the necessary environment and start the application. 
 
 #### Using Azure Foundry Local
 
@@ -37,6 +68,55 @@ AZURE_FOUNDRY_LOCAL_MODEL_ALIAS=phi-4-mini-reasoning
 ```
 
 #### Using Docker Models
+
+##### Prerequisites
+- **[Git](https://git-scm.com/downloads)** (for cloning the repository)
+- **[Node.js](https://nodejs.org/en/download)** (for the UI and API services)
+- **[Docker v4.42.0 or later](https://www.docker.com/)** (for the MCP servers)
+- **[ai/phi4:14B-Q4_0 model](https://hub.docker.com/r/ai/phi4)** (7.80 GB)
+  - This is the model variant from the Phi-4 family that supports **Function Calling** which is required for the application to work.
+
+##### Start the application
+
+1. Run the preview script from the root of the project:
+<details open>
+  <summary>For Linux and macOS users</summary>
+
+```bash
+./preview.sh
+```
+
+</details>
+<br>
+<details>
+  <summary>For Windows users</summary>
+
+```powershell
+.\preview.ps1
+```
+</details>
+<br>
+
+Start the API service by running the following command in a terminal:
+
+```bash
+npm start --prefix=src/api
+```
+
+Open a new terminal and start the UI service by running the following command:
+
+```bash
+npm start --prefix=src/ui
+```
+
+Once all services are up and running, you can access the **UI** at http://localhost:4200.
+
+![UI Screenshot](azure-ai-travel-agent-demo-1.gif)
+
+You can also view the traces via the [Aspire Dashboard](https://aspiredashboard.com/) at http://localhost:18888.
+  - On `Structured` tab you'll see the logging messages from the **tool-echo-ping** and **api** services. The `Traces` tab will show the traces across the services, such as the call from **api** to **echo-agent**.
+
+
 Before using Docker Models, ensure you have the [Docker Model Runner](https://docs.docker.com/ai/model-runner/) installed and running. You can find a list of available models by running the following command in your terminal:
 
 ```bash
@@ -68,6 +148,21 @@ LLM_PROVIDER=ollama-models
 OLLAMA_MODEL_ENDPOINT=http://localhost:11434/v1
 OLLAMA_MODEL=llama3.1
 ```
+
+### Using GitHub Codespaces
+
+You can run this project directly in your browser by using GitHub Codespaces, which will open a web-based VS Code:
+
+[![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=blue&logo=github)](https://codespaces.new/Azure-Samples/azure-ai-travel-agents?hide_repo_select=true&ref&quickstart=true)
+
+### Using a VSCode dev container
+
+A similar option to Codespaces is VS Code Dev Containers, that will open the project in your local VS Code instance using the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
+
+You will also need to have [Docker](https://www.docker.com/products/docker-desktop) installed on your machine to run the container.
+
+[![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/Azure-Samples/azure-ai-travel-agents)
+
 
 ### Running the MCP servers in a containerized environment
 

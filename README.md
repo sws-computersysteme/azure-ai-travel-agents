@@ -71,104 +71,35 @@ The architecture of the AI Travel Agents application is designed to be modular a
 ## Preview the application locally for FREE
 
 To run and preview the application locally, we will use [Docker Model Runner](https://docs.docker.com/ai/model-runner/).
+> [!IMPORTANT]
+> The Phi4 14B model requires **significant resources** (at least 16GB RAM and a modern CPU or GPU) to run efficiently. 
+GPU acceleration is only supported on macOS Apple Silicon and NVIDIA GPUs on Windows). 
+> If your machine does not have enough resources to run LLMs locally, you can still run the application using Azure AI Foundry. Please refer to the [Advanced Setup](docs/advanced-setup.md) documentation for more information.
 
-> [!NOTE]
-> If your machine does not have enough resources to run the Docker Model Runner, you can still run the application using Azure OpenAI. Please refer to the [Preview the application using Azure AI Foundry](#preview-the-application-using-azure-ai-foundry) section below.
+### One setup script
 
-### Prerequisites
-- **[Git](https://git-scm.com/downloads)** (for cloning the repository)
-- **[Node.js](https://nodejs.org/en/download)** (for the UI and API services)
-- **[Docker v4.42.0 or later](https://www.docker.com/)** (for the MCP servers)
-- **[ai/phi4:14B-Q4_0 model](https://hub.docker.com/r/ai/phi4)** (7.80 GB)
-  - This is the model variant from the Phi-4 family that supports **Function Calling** which is required for the application to work.
+You can run the following command to set up the environment:
 
-In order to run the application locally, you need to clone the repository and run the preview script. This will set up the necessary environment and start the application. 
-
-We also recommend you [fork the repository](https://github.com/Azure-Samples/azure-ai-travel-agents/fork) to your own GitHub account so you can make changes and experiment with the code.
-
-<details open>
-  <summary>Using HTTPS</summary>
-
-```bash
-git clone https://github.com/YOUR-USERNAME/azure-ai-travel-agents.git
-```
-
-</details>
-<br>
-<details>
-  <summary>Using SSH</summary>
-
-```bash
-git clone git@github.com:YOUR-USERNAME/azure-ai-travel-agents.git
-```
-</details>
-
-<br>
-<details>
-  <summary>Using GitHub CLI</summary>
-
-```bash
-gh repo clone YOUR-USERNAME/azure-ai-travel-agents
-```
-</details>
-<br>
-
-### Start the application
-
-1. Run the preview script from the root of the project:
 <details open>
   <summary>For Linux and macOS users</summary>
 
 ```bash
-./preview.sh
+/bin/bash <(curl -fsSL https://raw.githubusercontent.com/Azure-Samples/azure-ai-travel-agents/main/preview.sh)
 ```
-
 </details>
 <br>
 <details>
   <summary>For Windows users</summary>
 
 ```powershell
-.\preview.ps1
+irm https://raw.githubusercontent.com/Azure-Samples/azure-ai-travel-agents/main/preview.ps1 | pwsh
 ```
 </details>
 <br>
 
-Start the API service by running the following command in a terminal:
-
-```bash
-npm start --prefix=src/api
-```
-
-Open a new terminal and start the UI service by running the following command:
-
-```bash
-npm start --prefix=src/ui
-```
-
-Once all services are up and running, you can access the **UI** at http://localhost:4200.
-
-![UI Screenshot](docs/azure-ai-travel-agent-demo-1.gif)
-
-You can also view the traces via the [Aspire Dashboard](https://aspiredashboard.com/) at http://localhost:18888.
-  - On `Structured` tab you'll see the logging messages from the **tool-echo-ping** and **api** services. The `Traces` tab will show the traces across the services, such as the call from **api** to **echo-agent**.
-
-
-### Use GitHub Codespaces
-
-You can run this project directly in your browser by using GitHub Codespaces, which will open a web-based VS Code:
-
-[![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=blue&logo=github)](https://codespaces.new/Azure-Samples/azure-ai-travel-agents?hide_repo_select=true&ref&quickstart=true)
-
-### Use a VSCode dev container
-
-A similar option to Codespaces is VS Code Dev Containers, that will open the project in your local VS Code instance using the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
-
-You will also need to have [Docker](https://www.docker.com/products/docker-desktop) installed on your machine to run the container.
-
-[![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/Azure-Samples/azure-ai-travel-agents)
-
 ## Cost estimation
+
+When provisioning resources in Azure, it's important to consider the costs associated with running the application. The AI Travel Agents sample uses several Azure services, and the costs can vary based on your usage and configuration.
 
 Pricing varies per region and usage, so it isn't possible to predict exact costs for your usage.
 However, you can use the [Azure pricing calculator](https://azure.com/e/10e328d3aa074a5089a5ae6c1fb65ba9) for the resources below to get an estimate.
@@ -178,10 +109,11 @@ However, you can use the [Azure pricing calculator](https://azure.com/e/10e328d3
 - Azure OpenAI: Standard tier, GPT model. Pricing per 1K tokens used, and at least 1K tokens are used per query. [Pricing](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/)
 - Azure Monitor: Free for the first 5GB of data ingested. Pricing per GB ingested after that. [Pricing](https://azure.microsoft.com/pricing/details/monitor/)
 
-⚠️ To avoid unnecessary costs, remember to take down your app if it's no longer in use,
+> [!IMPORTANT] 
+> To avoid unnecessary costs, remember to take down your app if it's no longer in use,
 either by deleting the resource group in the Portal or running `azd down --purge` (see [Clean up](#clean-up)).
 
-## Deploy the sample
+## Quick deploy the sample to Azure
 
 1. Open a terminal and navigate to the root of the project.
 2. Authenticate with Azure by running `azd auth login`.
