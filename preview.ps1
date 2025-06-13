@@ -117,6 +117,7 @@ if (Test-Path ./infra/hooks/mcp/setup.ps1) {
 }
 
 # Step 4: Print next steps
+Set-Location $REPO_DIR
 Write-Host ("`n{0}{1}========================================{2}" -f $GREEN, $BOLD, $NC)
 Write-Host ("{0}{1}Local environment is ready!{2}`n" -f $GREEN, $BOLD, $NC)
 Write-Host ("{0}To run the API service, use:{1}" -f $BLUE, $NC)

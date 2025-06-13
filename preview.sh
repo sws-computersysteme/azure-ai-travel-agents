@@ -130,6 +130,7 @@ else
 fi
 
 # Step 4: Print next steps
+cd "$REPO_DIR"
 echo -e "\n${GREEN}${BOLD}========================================${NC}"
 echo -e "${GREEN}${BOLD}Local environment is ready!${NC}\n"
 echo -e "${BLUE}To run the API service, use:${NC}"
