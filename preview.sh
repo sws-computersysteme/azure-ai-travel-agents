@@ -15,17 +15,6 @@ CYAN='\033[0;36m'
 BOLD='\033[1m'
 NC='\033[0m' # No Color
 
-# If not running inside the repo, clone it and re-run the script from there
-REPO_URL="https://github.com/Azure-Samples/azure-ai-travel-agents.git"
-REPO_DIR="azure-ai-travel-agents"
-# Check for .git directory and preview.sh in the current directory
-if [ ! -d .git ] || [ ! -f preview.sh ]; then
-  echo -e "${CYAN}Cloning AI Travel Agents repository...${NC}"
-  git clone "$REPO_URL"
-  cd "$REPO_DIR"
-  exec bash preview.sh "$@"
-fi
-
 # Step 0: Prerequisite checks
 echo -e "${BOLD}${BLUE}Checking prerequisites...${NC}"
 MISSING=0
@@ -63,6 +52,17 @@ if [ $MISSING -eq 1 ]; then
   exit 1
 else
   echo -e "${GREEN}All prerequisites are installed.${NC}\n"
+fi
+
+# Step 0: If not running inside the repo, clone it and re-run the script from there
+REPO_URL="https://github.com/Azure-Samples/azure-ai-travel-agents.git"
+REPO_DIR="azure-ai-travel-agents"
+# Check for .git directory and preview.sh in the current directory
+if [ ! -d .git ] || [ ! -f preview.sh ]; then
+  echo -e "${CYAN}Cloning AI Travel Agents repository...${NC}"
+  git clone "$REPO_URL"
+  cd "$REPO_DIR"
+  $SHELL preview.sh "$@"
 fi
 
 # Step 1: Setup API dependencies
@@ -135,3 +135,5 @@ echo -e "  ${BOLD}npm start --prefix ./src/api${NC}\n"
 echo -e "${BLUE}To run the UI service, open a new terminal and use:${NC}"
 echo -e "  ${BOLD}npm start --prefix ./src/ui${NC}\n"
 echo -e "${GREEN}${BOLD}========================================${NC}"
+
+$SHELL

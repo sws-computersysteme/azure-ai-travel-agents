@@ -13,17 +13,6 @@ $CYAN   = "`e[36m"
 $BOLD   = "`e[1m"
 $NC     = "`e[0m" # No Color
 
-# If not running inside the repo, clone it and re-run the script from there
-$REPO_URL = "https://github.com/Azure-Samples/azure-ai-travel-agents.git"
-$REPO_DIR = "azure-ai-travel-agents"
-if (!(Test-Path .git) -or !(Test-Path (Split-Path -Leaf $MyInvocation.MyCommand.Path))) {
-    Write-Host ("{0}Cloning AI Travel Agents repository...{1}" -f $CYAN, $NC)
-    git clone $REPO_URL
-    Set-Location $REPO_DIR
-    & pwsh preview.ps1 @args
-    exit $LASTEXITCODE
-}
-
 # Unicode checkmark and cross
 $CHECK = [char]0x2714  # ✔
 $CROSS = [char]0x274C  # ❌
@@ -65,10 +54,27 @@ if ($missing) {
     Write-Host ("{0}All prerequisites are installed.{1}`n" -f $GREEN, $NC)
 }
 
+# Step 0: If not running inside the repo, clone it and re-run the script from there
+$REPO_URL = "https://github.com/Azure-Samples/azure-ai-travel-agents.git"
+$REPO_DIR = "azure-ai-travel-agents"
+# Check for .git directory and preview.ps1 in the current directory
+if (!(Test-Path .git) -or !(Test-Path preview.ps1)) {
+    Write-Host ("{0}Cloning AI Travel Agents repository...{1}" -f $CYAN, $NC)
+    git clone $REPO_URL
+    Set-Location $REPO_DIR
+    & pwsh preview.ps1 @args
+    exit $LASTEXITCODE
+}
+
 # Step 1: Setup API dependencies
 if (Test-Path ./infra/hooks/api/setup.ps1) {
     Write-Host ("{0}>> Running API setup...{1}" -f $CYAN, $NC)
     & ./infra/hooks/api/setup.ps1
+    $api_status = $LASTEXITCODE
+    if ($api_status -ne 0) {
+        Write-Host ("{0}{1}API setup failed with exit code $api_status. Exiting.{2}" -f $RED, $BOLD, $NC)
+        exit $api_status
+    }
 } else {
     Write-Host ("{0}API setup script not found, skipping.{1}" -f $YELLOW, $NC)
 }
@@ -92,18 +98,24 @@ if (!(Test-Path -Path ./src/api)) {
     New-Item -ItemType Directory -Path ./src/api | Out-Null
 }
 Set-Content -Path ./src/api/.env -Value $envContent -Encoding UTF8
-Write-Host ("{0}{1}.env file created in ./src/api/.env.{2}" -f $GREEN, $BOLD, $NC)
+Write-Host ("{0}{1}.env file created in src/api/.env.{2}" -f $GREEN, $BOLD, $NC)
 
 # Step 2: Setup UI dependencies
 if (Test-Path ./infra/hooks/ui/setup.ps1) {
     Write-Host ("{0}>> Running UI setup...{1}" -f $CYAN, $NC)
     & ./infra/hooks/ui/setup.ps1
+    $ui_status = $LASTEXITCODE
+    if ($ui_status -ne 0) {
+        Write-Host ("{0}{1}UI setup failed with exit code $ui_status. Exiting.{2}" -f $RED, $BOLD, $NC)
+        exit $ui_status
+    }
 } else {
     Write-Host ("{0}UI setup script not found, skipping.{1}" -f $YELLOW, $NC)
 }
 
 # Step 2.5: Create .env file for the UI
-$uiEnvContent = @"NG_API_URL=http://localhost:4000
+$uiEnvContent = @"
+NG_API_URL=http://localhost:4000
 "@
 Set-Content -Path ./src/ui/.env -Value $uiEnvContent -Encoding UTF8
 Write-Host ("{0}{1}.env file created in src/ui/.env.{2}" -f $GREEN, $BOLD, $NC)
@@ -112,6 +124,11 @@ Write-Host ("{0}{1}.env file created in src/ui/.env.{2}" -f $GREEN, $BOLD, $NC)
 if (Test-Path ./infra/hooks/mcp/setup.ps1) {
     Write-Host ("{0}>> Running MCP tools setup...{1}" -f $CYAN, $NC)
     & ./infra/hooks/mcp/setup.ps1
+    $mcp_status = $LASTEXITCODE
+    if ($mcp_status -ne 0) {
+        Write-Host ("{0}{1}MCP tools setup failed with exit code $mcp_status. Exiting.{2}" -f $RED, $BOLD, $NC)
+        exit $mcp_status
+    }
 } else {
     Write-Host ("{0}MCP tools setup script not found, skipping.{1}" -f $YELLOW, $NC)
 }
