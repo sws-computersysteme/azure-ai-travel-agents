@@ -1,15 +1,16 @@
+#!/usr/bin/env pwsh
 # This script builds, configures, and prepares the environment for running the AI Travel Agents applications on Windows.
 # This script can be run directly via:
-#   irm https://raw.githubusercontent.com/Azure-Samples/azure-ai-travel-agents/main/preview.ps1 | pwsh
+#   irm https://aka.ms/azure-ai-travel-agents-preview | pwsh
 
 $ErrorActionPreference = 'Stop'
 
 # Colors (ANSI escape codes, supported in Windows 10+)
-$RED    = "`e[31m"
-$GREEN  = "`e[32m"
-$YELLOW = "`e[33m"
-$BLUE   = "`e[34m"
-$CYAN   = "`e[36m"
+$RED    = "`e[0;31m"
+$GREEN  = "`e[0;32m"
+$YELLOW = "`e[1;33m"
+$BLUE   = "`e[0;34m"
+$CYAN   = "`e[0;36m"
 $BOLD   = "`e[1m"
 $NC     = "`e[0m" # No Color
 
@@ -17,41 +18,39 @@ $NC     = "`e[0m" # No Color
 $CHECK = [char]0x2714  # ✔
 $CROSS = [char]0x274C  # ❌
 
+# Step 0: Prerequisite checks
 Write-Host ("{0}{1}Checking prerequisites...{2}" -f $BOLD, $BLUE, $NC)
-$missing = $false
+$MISSING = 0
 
-# Node.js
 if (Get-Command node -ErrorAction SilentlyContinue) {
-    $nodeVersion = node --version
-    Write-Host ("{0}{1} Node.js version: {2}{3}" -f $GREEN, $CHECK, $nodeVersion, $NC)
+    $NODE_VERSION = node --version
+    Write-Host ("{0}{1} Node.js version: {2}{3}" -f $GREEN, $CHECK, $NODE_VERSION, $NC)
 } else {
     Write-Host ("{0}{1} Node.js is not installed. Please install Node.js (https://nodejs.org/){2}" -f $RED, $CROSS, $NC)
-    $missing = $true
+    $MISSING = 1
 }
 
-# npm
 if (Get-Command npm -ErrorAction SilentlyContinue) {
-    $npmVersion = npm --version
-    Write-Host ("{0}{1} npm version: {2}{3}" -f $GREEN, $CHECK, $npmVersion, $NC)
+    $NPM_VERSION = npm --version
+    Write-Host ("{0}{1} npm version: {2}{3}" -f $GREEN, $CHECK, $NPM_VERSION, $NC)
 } else {
     Write-Host ("{0}{1} npm is not installed. Please install npm (https://www.npmjs.com/){2}" -f $RED, $CROSS, $NC)
-    $missing = $true
+    $MISSING = 1
 }
 
-# Docker
 if (Get-Command docker -ErrorAction SilentlyContinue) {
-    $dockerVersion = docker --version
-    Write-Host ("{0}{1} Docker version: {2}{3}" -f $GREEN, $CHECK, $dockerVersion, $NC)
+    $DOCKER_VERSION = docker --version
+    Write-Host ("{0}{1} Docker version: {2}{3}" -f $GREEN, $CHECK, $DOCKER_VERSION, $NC)
 } else {
     Write-Host ("{0}{1} Docker is not installed. Please install Docker Desktop (https://www.docker.com/products/docker-desktop/){2}" -f $RED, $CROSS, $NC)
-    $missing = $true
+    $MISSING = 1
 }
 
-if ($missing) {
+if ($MISSING -eq 1) {
     Write-Host ("{0}{1}One or more prerequisites are missing. Please install them and re-run this script.{2}" -f $RED, $BOLD, $NC)
     exit 1
 } else {
-    Write-Host ("{0}All prerequisites are installed.{1}`n" -f $GREEN, $NC)
+    Write-Host ("{0}All prerequisites are installed.{1}" -f $GREEN, $NC)
 }
 
 # Step 0: If not running inside the repo, clone it and re-run the script from there
@@ -64,14 +63,12 @@ if (!(Test-Path .git) -or !(Test-Path preview.ps1)) {
     Set-Location $REPO_DIR
     & pwsh preview.ps1 @args
     exit $LASTEXITCODE
-} else {
-    Write-Host ("{0}Running setup in existing repository. Skipping clone.{1}" -f $CYAN, $NC)
 }
 
 # Step 1: Setup API dependencies
 if (Test-Path ./infra/hooks/api/setup.ps1) {
     Write-Host ("{0}>> Running API setup...{1}" -f $CYAN, $NC)
-    & ./infra/hooks/api/setup.ps1
+    bash ./infra/hooks/api/setup.sh
     $api_status = $LASTEXITCODE
     if ($api_status -ne 0) {
         Write-Host ("{0}{1}API setup failed with exit code $api_status. Exiting.{2}" -f $RED, $BOLD, $NC)
@@ -82,6 +79,9 @@ if (Test-Path ./infra/hooks/api/setup.ps1) {
 }
 
 # Step 1.5: Create .env file for the user
+if (!(Test-Path -Path ./src/api)) {
+    New-Item -ItemType Directory -Path ./src/api | Out-Null
+}
 $envContent = @"
 LLM_PROVIDER=docker-models
 DOCKER_MODEL_ENDPOINT=http://localhost:12434/engines/llama.cpp/v1
@@ -96,16 +96,13 @@ MCP_WEB_SEARCH_URL=http://localhost:5006
 MCP_ECHO_PING_URL=http://localhost:5007
 MCP_ECHO_PING_ACCESS_TOKEN=123-this-is-a-fake-token-please-use-a-token-provider
 "@
-if (!(Test-Path -Path ./src/api)) {
-    New-Item -ItemType Directory -Path ./src/api | Out-Null
-}
 Set-Content -Path ./src/api/.env -Value $envContent -Encoding UTF8
 Write-Host ("{0}{1}.env file created in src/api/.env.{2}" -f $GREEN, $BOLD, $NC)
 
 # Step 2: Setup UI dependencies
 if (Test-Path ./infra/hooks/ui/setup.ps1) {
     Write-Host ("{0}>> Running UI setup...{1}" -f $CYAN, $NC)
-    & ./infra/hooks/ui/setup.ps1
+    bash ./infra/hooks/ui/setup.sh
     $ui_status = $LASTEXITCODE
     if ($ui_status -ne 0) {
         Write-Host ("{0}{1}UI setup failed with exit code $ui_status. Exiting.{2}" -f $RED, $BOLD, $NC)
@@ -125,7 +122,7 @@ Write-Host ("{0}{1}.env file created in src/ui/.env.{2}" -f $GREEN, $BOLD, $NC)
 # Step 3: Setup MCP tools (env, dependencies, docker build)
 if (Test-Path ./infra/hooks/mcp/setup.ps1) {
     Write-Host ("{0}>> Running MCP tools setup...{1}" -f $CYAN, $NC)
-    & ./infra/hooks/mcp/setup.ps1
+    bash ./infra/hooks/mcp/setup.sh
     $mcp_status = $LASTEXITCODE
     if ($mcp_status -ne 0) {
         Write-Host ("{0}{1}MCP tools setup failed with exit code $mcp_status. Exiting.{2}" -f $RED, $BOLD, $NC)
@@ -136,10 +133,10 @@ if (Test-Path ./infra/hooks/mcp/setup.ps1) {
 }
 
 # Step 4: Print next steps
-Write-Host ("`n{0}{1}========================================{2}" -f $GREEN, $BOLD, $NC)
-Write-Host ("{0}{1}Local environment is ready!{2}`n" -f $GREEN, $BOLD, $NC)
+Write-Host ("\n{0}{1}========================================{2}" -f $GREEN, $BOLD, $NC)
+Write-Host ("{0}{1}Local environment is ready!{2}" -f $GREEN, $BOLD, $NC)
 Write-Host ("{0}To run the API service, use:{1}" -f $BLUE, $NC)
-Write-Host ("  {0}npm start --prefix ./src/api{1}`n" -f $BOLD, $NC)
+Write-Host ("  {0}npm start --prefix ./src/api{1}" -f $BOLD, $NC)
 Write-Host ("{0}To run the UI service, open a new terminal and use:{1}" -f $BLUE, $NC)
-Write-Host ("  {0}npm start --prefix ./src/ui{1}`n" -f $BOLD, $NC)
+Write-Host ("  {0}npm start --prefix ./src/ui{1}" -f $BOLD, $NC)
 Write-Host ("{0}{1}========================================{2}" -f $GREEN, $BOLD, $NC)

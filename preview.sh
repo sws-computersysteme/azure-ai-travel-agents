@@ -2,7 +2,7 @@
 #!/bin/bash
 # This script builds, configures, and prepares the environment for running the AI Travel Agents applications.
 # This script can be run directly via:
-#   /bin/bash <(curl -fsSL https://raw.githubusercontent.com/Azure-Samples/azure-ai-travel-agents/main/preview.sh)
+#   /bin/bash <(curl -fsSL https://aka.ms/azure-ai-travel-agents-preview)
 
 set -e
 
@@ -16,7 +16,7 @@ BOLD='\033[1m'
 NC='\033[0m' # No Color
 
 # Step 0: Prerequisite checks
-echo "${BOLD}${BLUE}Checking prerequisites...${NC}"
+printf "${BOLD}${BLUE}Checking prerequisites...${NC}\n"
 MISSING=0
 
 # Unicode checkmark and cross
@@ -25,33 +25,33 @@ CROSS='\xE2\x9D\x8C' # ❌
 
 if command -v node >/dev/null 2>&1; then
   NODE_VERSION=$(node --version)
-  echo "${GREEN}${CHECK} Node.js version: ${NODE_VERSION}${NC}"
+  printf "${GREEN}${CHECK} Node.js version: ${NODE_VERSION}${NC}\n"
 else
-  echo "${RED}${CROSS} Node.js is not installed. Please install Node.js (https://nodejs.org/)${NC}"
+  printf "${RED}${CROSS} Node.js is not installed. Please install Node.js (https://nodejs.org/)${NC}\n"
   MISSING=1
 fi
 
 if command -v npm >/dev/null 2>&1; then
   NPM_VERSION=$(npm --version)
-  echo "${GREEN}${CHECK} npm version: ${NPM_VERSION}${NC}"
+  printf "${GREEN}${CHECK} npm version: ${NPM_VERSION}${NC}\n"
 else
-  echo "${RED}${CROSS} npm is not installed. Please install npm (https://www.npmjs.com/)${NC}"
+  printf "${RED}${CROSS} npm is not installed. Please install npm (https://www.npmjs.com/)${NC}\n"
   MISSING=1
 fi
 
 if command -v docker >/dev/null 2>&1; then
   DOCKER_VERSION=$(docker --version)
-  echo "${GREEN}${CHECK} Docker version: ${DOCKER_VERSION}${NC}"
+  printf "${GREEN}${CHECK} Docker version: ${DOCKER_VERSION}${NC}\n"
 else
-  echo "${RED}${CROSS} Docker is not installed. Please install Docker Desktop (https://www.docker.com/products/docker-desktop/)${NC}"
+  printf "${RED}${CROSS} Docker is not installed. Please install Docker Desktop (https://www.docker.com/products/docker-desktop/)${NC}\n"
   MISSING=1
 fi
 
 if [ $MISSING -eq 1 ]; then
-  echo "${RED}${BOLD}One or more prerequisites are missing. Please install them and re-run this script.${NC}"
+  printf "${RED}${BOLD}One or more prerequisites are missing. Please install them and re-run this script.${NC}\n"
   exit 1
 else
-  echo "${GREEN}All prerequisites are installed.${NC}\n"
+  printf "${GREEN}All prerequisites are installed.${NC}\n"
 fi
 
 # Step 0: If not running inside the repo, clone it and re-run the script from there
@@ -59,7 +59,7 @@ REPO_URL="https://github.com/Azure-Samples/azure-ai-travel-agents.git"
 REPO_DIR="azure-ai-travel-agents"
 # Check for .git directory and preview.sh in the current directory
 if [ ! -d .git ] || [ ! -f preview.sh ]; then
-  echo "${CYAN}Cloning AI Travel Agents repository...${NC}"
+  printf "${CYAN}Cloning AI Travel Agents repository...${NC}\n"
   git clone "$REPO_URL"
   cd "$REPO_DIR"
   $SHELL preview.sh "$@"
@@ -67,15 +67,15 @@ fi
 
 # Step 1: Setup API dependencies
 if [ -f ./infra/hooks/api/setup.sh ]; then
-  echo "${CYAN}>> Running API setup...${NC}"
+  printf "${CYAN}>> Running API setup...${NC}\n"
   bash ./infra/hooks/api/setup.sh
   api_status=$?
   if [ $api_status -ne 0 ]; then
-    echo "${RED}${BOLD}API setup failed with exit code $api_status. Exiting.${NC}"
+    printf "${RED}${BOLD}API setup failed with exit code $api_status. Exiting.${NC}\n"
     exit $api_status
   fi
 else
-  echo "${YELLOW}API setup script not found, skipping.${NC}"
+  printf "${YELLOW}API setup script not found, skipping.${NC}\n"
 fi
 
 # Step 1.5: Create .env file for the user
@@ -93,47 +93,47 @@ MCP_WEB_SEARCH_URL=http://localhost:5006
 MCP_ECHO_PING_URL=http://localhost:5007
 MCP_ECHO_PING_ACCESS_TOKEN=123-this-is-a-fake-token-please-use-a-token-provider
 EOM
-echo "${GREEN}${BOLD}.env file created in src/api/.env.${NC}"
+printf "${GREEN}${BOLD}.env file created in src/api/.env.${NC}"
 
 # Step 2: Setup UI dependencies
 if [ -f ./infra/hooks/ui/setup.sh ]; then
-  echo "${CYAN}>> Running UI setup...${NC}"
+  printf "${CYAN}>> Running UI setup...${NC}"
   bash ./infra/hooks/ui/setup.sh
   ui_status=$?
   if [ $ui_status -ne 0 ]; then
-    echo "${RED}${BOLD}UI setup failed with exit code $ui_status. Exiting.${NC}"
+    printf "${RED}${BOLD}UI setup failed with exit code $ui_status. Exiting.${NC}\n"
     exit $ui_status
   fi
 else
-  echo "${YELLOW}UI setup script not found, skipping.${NC}"
+  printf "${YELLOW}UI setup script not found, skipping.${NC}\n"
 fi
 
 # Step 2.5: Create .env file for the UI
 cat > ./src/ui/.env <<EOM
 NG_API_URL=http://localhost:4000
 EOM
-echo "${GREEN}${BOLD}.env file created in src/ui/.env.${NC}"
+printf "${GREEN}${BOLD}.env file created in src/ui/.env.${NC}\n"
 
 # Step 3: Setup MCP tools (env, dependencies, docker build)
 if [ -f ./infra/hooks/mcp/setup.sh ]; then
-  echo "${CYAN}>> Running MCP tools setup...${NC}"
+  printf "${CYAN}>> Running MCP tools setup...${NC}\n"
   bash ./infra/hooks/mcp/setup.sh
   mcp_status=$?
   if [ $mcp_status -ne 0 ]; then
-    echo "${RED}${BOLD}MCP tools setup failed with exit code $mcp_status. Exiting.${NC}"
+    printf "${RED}${BOLD}MCP tools setup failed with exit code $mcp_status. Exiting.${NC}\n"
     exit $mcp_status
   fi
 else
-  echo "${YELLOW}MCP tools setup script not found, skipping.${NC}"
+  printf "${YELLOW}MCP tools setup script not found, skipping.${NC}\n"
 fi
 
 # Step 4: Print next steps
-echo "\n${GREEN}${BOLD}========================================${NC}"
-echo "${GREEN}${BOLD}Local environment is ready!${NC}\n"
-echo "${BLUE}To run the API service, use:${NC}"
-echo "  ${BOLD}npm start --prefix ./src/api${NC}\n"
-echo "${BLUE}To run the UI service, open a new terminal and use:${NC}"
-echo "  ${BOLD}npm start --prefix ./src/ui${NC}\n"
-echo "${GREEN}${BOLD}========================================${NC}"
+printf "\n${GREEN}${BOLD}========================================${NC}\n"
+printf "${GREEN}${BOLD}Local environment is ready!${NC}\n"
+printf "${BLUE}To run the API service, use:${NC}\n"
+printf "  ${BOLD}npm start --prefix ./src/api${NC}\n"
+printf "${BLUE}To run the UI service, open a new terminal and use:${NC}\n"
+printf "  ${BOLD}npm start --prefix ./src/ui${NC}\n"
+printf "${GREEN}${BOLD}========================================${NC}\n"
 
 $SHELL
