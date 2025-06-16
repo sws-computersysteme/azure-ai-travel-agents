@@ -19,13 +19,15 @@
 
 :star: To stay updated and get notified about changes, star this repo on GitHub!
 
-[![GitHub Repo stars](https://img.shields.io/github/stars/Azure-Samples/azure-ai-travel-agents?style=social)](https://github.com/Azure-Samples/azure-ai-travel-agents)
+[![GitHub Repo stars](https://img.shields.io/github/stars/Azure-Samples/azure-ai-travel-agents?style=social)](https://github.com/Azure-Samples/azure-ai-travel-agents) ![GitHub forks](https://img.shields.io/github/forks/azure-samples/azure-ai-travel-agents) ![GitHub watchers](https://img.shields.io/github/watchers/azure-samples/azure-ai-travel-agents)
 
 
 
-[Overview](#overview) • [Architecture](#high-level-architecture) • [Features](#features) • [Preview the application locally](#preview-the-application-locally) • [Cost estimation](#cost-estimation) • [Join the Community](#join-the-community)
+[Overview](#overview) • [Architecture](#high-level-architecture) • [Features](#features) • [Preview locally FOR FREE](#preview-the-application-locally-for-free) • [Cost estimation](#cost-estimation) • [Join the Community](#join-the-community)
 
 ![Animation showing the chat app in action](./docs/azure-ai-travel-agent-demo-1.gif)
+
+[![Preview the application locally for free](https://img.shields.io/badge/Preview_the_application_locally_FOR_FREE-blue?style=flat-square&logo=docker&logoColor=white&logoSize=48)](#preview-the-application-locally-for-free)
 
 </div>
 
@@ -71,6 +73,7 @@ The architecture of the AI Travel Agents application is designed to be modular a
 ## Preview the application locally for FREE
 
 To run and preview the application locally, we will use [Docker Model Runner](https://docs.docker.com/ai/model-runner/).
+
 > [!IMPORTANT]
 > The Phi4 14B model requires **significant resources** (at least 16GB RAM and a modern CPU or GPU) to run efficiently. 
 GPU acceleration is only supported on macOS Apple Silicon and NVIDIA GPUs on Windows). 
@@ -78,13 +81,21 @@ GPU acceleration is only supported on macOS Apple Silicon and NVIDIA GPUs on Win
 
 ### One setup script
 
-You can run the following command to set up the environment:
+The script will do the following:
+- Run a check for the required tools and dependencies
+- Clone the current repository to your local machine
+- Install npm dependencies for the API and web app
+- Download the [Phi4 14B model](https://hub.docker.com/r/ai/phi4)
+  - This will take a while, as the model is large (around 7.80 GB)
+- Build the Docker images for all the MCP servers
+- Configure all the .env files with the correct settings for local AX
+
 
 <details open>
   <summary>For Linux and macOS users</summary>
 
 ```bash
-/bin/bash <(curl -fsSL https://raw.githubusercontent.com/Azure-Samples/azure-ai-travel-agents/main/preview.sh)
+/bin/bash <(curl -fsSL https://aka.ms/azure-ai-travel-agents-preview)
 ```
 </details>
 <br>
@@ -92,7 +103,7 @@ You can run the following command to set up the environment:
   <summary>For Windows users</summary>
 
 ```powershell
-irm https://raw.githubusercontent.com/Azure-Samples/azure-ai-travel-agents/main/preview.ps1 | pwsh
+irm https://aka.ms/azure-ai-travel-agents-preview-win | pwsh
 ```
 </details>
 <br>

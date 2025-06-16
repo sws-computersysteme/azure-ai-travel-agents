@@ -42,13 +42,6 @@ for tool in $tools; do
     fi
 done
 
-# Enable Docker Desktop Model Runner
-printf ">> Enabling Docker Desktop Model Runner...\n"
-docker desktop enable model-runner --tcp 12434
-
-printf ">> Pulling Docker model...\n"
-docker model pull ai/phi4:14B-Q4_0
-
 #  only build docker compose, do not start the containers yet
 printf ">> Building MCP servers with Docker Compose...\n"
 docker compose -f src/docker-compose.yml up --build -d $(echo $tools | sed 's/\([^ ]*\)/tool-\1/g')
