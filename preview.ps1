@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 # This script builds, configures, and prepares the environment for running the AI Travel Agents applications on Windows.
 # This script can be run directly via:
-#   irm https://aka.ms/azure-ai-travel-agents-preview | pwsh
+#   irm https://aka.ms/azure-ai-travel-agents-preview-win | pwsh
 
 $ErrorActionPreference = 'Stop'
 
