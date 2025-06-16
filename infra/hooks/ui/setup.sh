@@ -1,15 +1,15 @@
 #! /bin/bash
 
 # Install dependencies for the UI service
-echo ">> Installing dependencies for the UI service..."
+printf ">> Installing dependencies for the UI service...\n"
 if [ ! -d ./src/ui/node_modules ]; then
-    echo "Installing dependencies for the UI service..."
+    printf "Installing dependencies for the UI service...\n"
     npm ci --prefix=src/ui
     status=$?
     if [ $status -ne 0 ]; then
-        echo "UI dependencies installation failed with exit code $status. Exiting."
+        printf "UI dependencies installation failed with exit code $status. Exiting.\n"
         exit $status
     fi
 else
-    echo "Dependencies for the UI service already installed."
+    printf "Dependencies for the UI service already installed.\n"
 fi

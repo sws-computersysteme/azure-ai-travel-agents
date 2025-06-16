@@ -1,15 +1,15 @@
 #! /bin/bash
 
 # Install dependencies for the API service
-echo ">> Installing dependencies for the API service..."
+printf ">> Installing dependencies for the API service...\n"
 if [ ! -d ./src/api/node_modules ]; then
-    echo "Installing dependencies for the API service..."
-    npm ci --prefix=src/api --legacy-peer-deps 
+    printf "Installing dependencies for the API service...\n"
+    npm ci --prefix=src/api --legacy-peer-deps
     status=$?
     if [ $status -ne 0 ]; then
-        echo "API dependencies installation failed with exit code $status. Exiting."
+        printf "API dependencies installation failed with exit code $status. Exiting.\n"
         exit $status
     fi
 else
-    echo "Dependencies for the API service already installed."
+    printf "Dependencies for the API service already installed.\n"
 fi
