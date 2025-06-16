@@ -64,6 +64,8 @@ if (!(Test-Path .git) -or !(Test-Path preview.ps1)) {
     Set-Location $REPO_DIR
     & pwsh preview.ps1 @args
     exit $LASTEXITCODE
+} else {
+    Write-Host ("{0}Running setup in existing repository. Skipping clone.{1}" -f $CYAN, $NC)
 }
 
 # Step 1: Setup API dependencies
