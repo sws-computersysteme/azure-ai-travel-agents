@@ -21,6 +21,15 @@
     Write-Host ("{0}{1}Checking prerequisites...{2}" -f $BOLD, $BLUE, $NC)
     $MISSING = 0
 
+    # Check if git is installed
+    if (Get-Command git -ErrorAction SilentlyContinue) {
+        $GIT_VERSION = git --version
+        Write-Host ("{0}{1} Git version: {2}{3}" -f $GREEN, $CHECK, $GIT_VERSION, $NC)
+    } else {
+        Write-Host ("{0}{1} Git is not installed. Please install Git (https://git-scm.com/){2}" -f $RED, $CROSS, $NC)
+        $MISSING = 1
+    }
+
     if (Get-Command node -ErrorAction SilentlyContinue) {
         $NODE_VERSION = node --version
         Write-Host ("{0}{1} Node.js version: {2}{3}" -f $GREEN, $CHECK, $NODE_VERSION, $NC)
