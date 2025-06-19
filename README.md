@@ -105,7 +105,7 @@ The script will do the following:
 **[Powershell 7+ (pwsh)](https://github.com/powershell/powershell)** is needed to run the script. **Important**: Ensure you can run `pwsh.exe` from a PowerShell terminal. If this fails, you likely need to [upgrade PowerShell](https://aka.ms/PSWindows).
 
 ```powershell
-irm https://aka.ms/azure-ai-travel-agents-preview-win | pwsh
+iex "& { $(irm https://aka.ms/azure-ai-travel-agents-preview-win) }"
 ```
 </details>
 <br>
