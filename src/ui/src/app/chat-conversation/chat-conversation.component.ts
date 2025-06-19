@@ -64,30 +64,31 @@ import { AccordionPreviewComponent } from '../components/accordion/accordion.com
 import { SkeletonPreviewComponent } from '../components/skeleton-preview/skeleton-preview.component';
 import { ChatService } from './chat-conversation.service';
 
-const SAMPLE_PROMPT_1 = `Hello! I'm planning a trip to Iceland and would like your expertise to create a custom itinerary. Please use your destination planning tools and internal resources to suggest a day-by-day plan based on:
-	•	Top must-see natural sites (glaciers, waterfalls, geothermal spots, etc.)
-	•	Unique local experiences (culture, food, hidden gems)
-	•	Efficient travel routes and realistic timing
-	•	A mix of adventure and relaxation
+const SAMPLE_PROMPT_1 = `Hallo! Ich plane eine Reise nach Island und würde gerne deine Expertise nutzen, um eine individuelle Reiseroute zu erstellen. Bitte nutze deine Tools zur Planung des Reiseziels und deine internen Ressourcen, um einen Tagesplan zu erstellen, der auf folgenden Punkten basiert:
+	- Die wichtigsten Natursehenswürdigkeiten (Gletscher, Wasserfälle, geothermische Orte usw.)
+	- Einzigartige lokale Erlebnisse (Kultur, Essen, verborgene Schätze)
+	- Effiziente Reiserouten und realistische Zeitplanung
+	- Eine Mischung aus Abenteuer und Entspannung
 
-I'm aiming for an itinerary that balances scenic exploration with comfort. Feel free to tailor recommendations based on the best time to visit and local logistics. Thank you!`;
+Ich strebe eine Reiseroute an, die ein Gleichgewicht zwischen landschaftlicher Erkundung und Komfort bietet. Du kannst deine Empfehlungen gerne auf die beste Reisezeit und die Logistik vor Ort abstimmen. Vielen Dank!`;
 
-const SAMPLE_PROMPT_2 = `Hi there! I'd love help planning a trip to Iceland. I'm looking for destination suggestions and a full itinerary tailored to an unforgettable experience. Please use your planning tools and destination insights to recommend:
-	•	Where to go and why
-	•	What to do each day (including any unique or off-the-beaten-path experiences)
-	•	Best ways to get around and where to stay
+const SAMPLE_PROMPT_2 = `Hallo! Ich hätte gerne Unterstützung bei der Planung einer Reise nach Island. Ich bin auf der Suche nach Vorschlägen für Reiseziele und eine komplette Reiseroute, die auf ein unvergessliches Erlebnis zugeschnitten ist. Bitte nutzen deine Planungstools und dein Wissen über Reiseziele und Empfehlungen:
+	- Wohin soll ich reisen und warum?
+	- Was man jeden Tag unternehmen sollte (einschließlich einzigartiger Erlebnisse oder Erlebnisse abseits der bekannten Routen und Pfade)
+	- Wie man sich am besten fortbewegt und wo man übernachtet
 
-I'm open to all kinds of adventures—whether it's chasing waterfalls, soaking in hot springs, or discovering small Icelandic towns. A tool-informed, creative itinerary would be amazing!`;
+Ich bin offen für alle Arten von Abenteuern - egal, ob es darum geht, Wasserfälle zu erklimmen, in heißen Quellen zu baden oder kleine isländische Städte zu entdecken. Eine kreative Reiseroute mit Hilfe deiner Tools wäre fantastisch!`;
 
-const SAMPLE_PROMPT_3 = `I'm planning a trip to Morocco and would appreciate a complete, tool-assisted itinerary.
-Please use your travel planning systems to recommend key destinations, daily activities, and a logical route.
-I'm looking for a balanced experience that includes cultural landmarks, natural scenery, and time to relax.
-Efficient travel logistics and seasonal considerations would be great to include.
+const SAMPLE_PROMPT_3 = `Ich plane eine Reise nach Marokko und würde mich über eine vollständige, toolgestützte Reiseroute freuen.
+Bitte verwende deine Reiseplanungssysteme, um wichtige Ziele, tägliche Aktivitäten und eine logische Route zu empfehlen.
+Ich wünsche mir ein ausgewogenes Erlebnis, das kulturelle Sehenswürdigkeiten, Naturlandschaften und Zeit zum Entspannen umfasst.
+Effiziente Reiselogistik und saisonale Erwägungen sollten ebenfalls berücksichtigt werden.
 
-Travel Dates: as soon as possible.
-Starting Point: from Paris, France.
-Duration: 10 days.
-Budget: 5000 euros.`;
+Reisedaten: so bald wie möglich.
+Startpunkt: Paris, Frankreich.
+Dauer der Reise: 10 Tage.
+Budget: 5000 Euro.
+`;
 
 @Component({
   selector: 'app-chat-conversation',
