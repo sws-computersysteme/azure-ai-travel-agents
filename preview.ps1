@@ -50,6 +50,7 @@ if ($MISSING -eq 1) {
     Write-Host ("{0}{1}One or more prerequisites are missing. Please install them and re-run this script.{2}" -f $RED, $BOLD, $NC)
     Write-Host "`nPress any key to exit..."
     $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    throw "Installation failed."
 } else {
     Write-Host ("{0}All prerequisites are installed.{1}" -f $GREEN, $NC)
 }
