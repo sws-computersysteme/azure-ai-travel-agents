@@ -68,7 +68,7 @@
     $REPO_DIR = "azure-ai-travel-agents"
 
     if (!(Test-Path .git) -or !(Test-Path preview.ps1)) {
-        Write-Host ("{0}Cloning AI Travel Agents repository...{1}" -f $CYAN, $NC)
+        Write-Host ("{0}Cloning Azure AI Travel Agents repository...{1}" -f $CYAN, $NC)
         git clone $REPO_URL
         Set-Location $REPO_DIR
         & pwsh preview.ps1 @args
