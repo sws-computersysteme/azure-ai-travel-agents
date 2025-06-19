@@ -24,8 +24,7 @@
           <hlm-alert-dialog-header>
             <h3 hlmAlertDialogTitle>Clear chat session?</h3>
             <p hlmAlertDialogDescription>
-              This will clear all messages from the current chat session and
-              start a new one. This action cannot be undone.
+              Durch diese Aktion werden alle Nachrichten aus der aktuellen Chatsitzung gelöscht und eine neue Sitzung begonnen. Diese Aktion kann nicht rückgängig gemacht werden.
             </p>
           </hlm-alert-dialog-header>
 
@@ -143,11 +142,11 @@
             hlmInput
             type="text"
             class="flex-1 border-0 pt-2 mb-2 w-[95%] overflow-y-auto rounded-xl resize-none "
-            placeholder="Type your message here (Shift + Enter for new line)..."
+            placeholder="Geben Sie hier Ihre Nachricht ein (Shift + Enter erzeugt eine neue Zeile)..."
             [(ngModel)]="chatService.userMessage"
             (keyup.enter)="chatService.sendMessage($event)"
           ></textarea>
-          <hlm-hint class="mr-1 mt-10">AI-generated content may be incorrect</hlm-hint>
+          <hlm-hint class="mr-1 mt-10">KI-generierte Inhalte können fehlerhaft sein...</hlm-hint>
         </hlm-form-field>
         <button
           hlmBtn
@@ -170,9 +169,9 @@
             *brnPopoverContent="let ctx"
           >
             <div class="space-y-2">
-              <h4 class="font-medium leading-none">Available Agents</h4>
+              <h4 class="font-medium leading-none">Verfügbare Agenten</h4>
               <p class="text-sm text-muted-foreground">
-                Choose which agents to use
+                Wählen Sie die Agenten aus, die genutzt werden sollen
               </p>
             </div>
             <div class="grid gap-2">
