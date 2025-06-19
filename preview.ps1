@@ -21,10 +21,9 @@
     Write-Host ("{0}{1}Checking prerequisites...{2}" -f $BOLD, $BLUE, $NC)
     $MISSING = 0
 
-    # Check if git is installed
     if (Get-Command git -ErrorAction SilentlyContinue) {
         $GIT_VERSION = git --version
-        Write-Host ("{0}{1} Git version: {2}{3}" -f $GREEN, $CHECK, $GIT_VERSION, $NC)
+        Write-Host ("{0}{1}  Git version: {2}{3}" -f $GREEN, $CHECK, $GIT_VERSION, $NC)
     } else {
         Write-Host ("{0}{1} Git is not installed. Please install Git (https://git-scm.com/){2}" -f $RED, $CROSS, $NC)
         $MISSING = 1
@@ -32,7 +31,7 @@
 
     if (Get-Command node -ErrorAction SilentlyContinue) {
         $NODE_VERSION = node --version
-        Write-Host ("{0}{1} Node.js version: {2}{3}" -f $GREEN, $CHECK, $NODE_VERSION, $NC)
+        Write-Host ("{0}{1}  Node.js version: {2}{3}" -f $GREEN, $CHECK, $NODE_VERSION, $NC)
     } else {
         Write-Host ("{0}{1} Node.js is not installed. Please install Node.js (https://nodejs.org/){2}" -f $RED, $CROSS, $NC)
         $MISSING = 1
@@ -40,7 +39,7 @@
 
     if (Get-Command npm -ErrorAction SilentlyContinue) {
         $NPM_VERSION = npm --version
-        Write-Host ("{0}{1} npm version: {2}{3}" -f $GREEN, $CHECK, $NPM_VERSION, $NC)
+        Write-Host ("{0}{1}  npm version: {2}{3}" -f $GREEN, $CHECK, $NPM_VERSION, $NC)
     } else {
         Write-Host ("{0}{1} npm is not installed. Please install npm (https://www.npmjs.com/){2}" -f $RED, $CROSS, $NC)
         $MISSING = 1
@@ -48,7 +47,7 @@
 
     if (Get-Command docker -ErrorAction SilentlyContinue) {
         $DOCKER_VERSION = docker --version
-        Write-Host ("{0}{1} Docker version: {2}{3}" -f $GREEN, $CHECK, $DOCKER_VERSION, $NC)
+        Write-Host ("{0}{1}  Docker version: {2}{3}" -f $GREEN, $CHECK, $DOCKER_VERSION, $NC)
     } else {
         Write-Host ("{0}{1} Docker is not installed. Please install Docker Desktop (https://www.docker.com/products/docker-desktop/){2}" -f $RED, $CROSS, $NC)
         $MISSING = 1
@@ -60,7 +59,7 @@
         $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         return
     } else {
-        Write-Host ("{0}All prerequisites are installed.{1}" -f $GREEN, $NC)
+        Write-Host ("{0} All prerequisites are installed.{1}" -f $GREEN, $NC)
     }
 
     # Step 0: If not running inside the repo, clone it and re-run the script from there
