@@ -3,6 +3,7 @@
 # This script can be run directly via:
 #   iex "& { $(irm https://aka.ms/azure-ai-travel-agents-preview-win) }"
 
+
 & {
     $ErrorActionPreference = 'Stop'
 
@@ -18,48 +19,60 @@
     $CHECK = [char]0x2714  # ✔
     $CROSS = [char]0x274C  # ❌
 
-    Write-Host ("{0}{1}Checking prerequisites...{2}" -f $BOLD, $BLUE, $NC)
-    $MISSING = 0
-
-    if (Get-Command git -ErrorAction SilentlyContinue) {
-        $GIT_VERSION = git --version
-        Write-Host ("{0}{1}  Git version: {2}{3}" -f $GREEN, $CHECK, $GIT_VERSION, $NC)
-    } else {
-        Write-Host ("{0}{1} Git is not installed. Please install Git (https://git-scm.com/){2}" -f $RED, $CROSS, $NC)
-        $MISSING = 1
+    # Parse arguments for --skip-checks
+    $SKIP_PREREQS = $false
+    foreach ($arg in $args) {
+        if ($arg -eq '--skip-checks') {
+            $SKIP_PREREQS = $true
+        }
     }
 
-    if (Get-Command node -ErrorAction SilentlyContinue) {
-        $NODE_VERSION = node --version
-        Write-Host ("{0}{1}  Node.js version: {2}{3}" -f $GREEN, $CHECK, $NODE_VERSION, $NC)
-    } else {
-        Write-Host ("{0}{1} Node.js is not installed. Please install Node.js (https://nodejs.org/){2}" -f $RED, $CROSS, $NC)
-        $MISSING = 1
-    }
+    if (-not $SKIP_PREREQS) {
+        Write-Host ("{0}{1}Checking prerequisites...{2}" -f $BOLD, $BLUE, $NC)
+        $MISSING = 0
 
-    if (Get-Command npm -ErrorAction SilentlyContinue) {
-        $NPM_VERSION = npm --version
-        Write-Host ("{0}{1}  npm version: {2}{3}" -f $GREEN, $CHECK, $NPM_VERSION, $NC)
-    } else {
-        Write-Host ("{0}{1} npm is not installed. Please install npm (https://www.npmjs.com/){2}" -f $RED, $CROSS, $NC)
-        $MISSING = 1
-    }
+        if (Get-Command git -ErrorAction SilentlyContinue) {
+            $GIT_VERSION = git --version
+            Write-Host ("{0}{1}  Git version: {2}{3}" -f $GREEN, $CHECK, $GIT_VERSION, $NC)
+        } else {
+            Write-Host ("{0}{1} Git is not installed. Please install Git (https://git-scm.com/){2}" -f $RED, $CROSS, $NC)
+            $MISSING = 1
+        }
 
-    if (Get-Command docker -ErrorAction SilentlyContinue) {
-        $DOCKER_VERSION = docker --version
-        Write-Host ("{0}{1}  Docker version: {2}{3}" -f $GREEN, $CHECK, $DOCKER_VERSION, $NC)
-    } else {
-        Write-Host ("{0}{1} Docker is not installed. Please install Docker Desktop (https://www.docker.com/products/docker-desktop/){2}" -f $RED, $CROSS, $NC)
-        $MISSING = 1
-    }
+        if (Get-Command node -ErrorAction SilentlyContinue) {
+            $NODE_VERSION = node --version
+            Write-Host ("{0}{1}  Node.js version: {2}{3}" -f $GREEN, $CHECK, $NODE_VERSION, $NC)
+        } else {
+            Write-Host ("{0}{1} Node.js is not installed. Please install Node.js (https://nodejs.org/){2}" -f $RED, $CROSS, $NC)
+            $MISSING = 1
+        }
 
-    if ($MISSING -eq 1) {
-        Write-Host ("`n{0}{1}One or more prerequisites are missing. Please install them and re-run this script.{2}" -f $RED, $BOLD, $NC)
-        Write-Host "`nPress any key to exit..."
-        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-        return
+        if (Get-Command npm -ErrorAction SilentlyContinue) {
+            $NPM_VERSION = npm --version
+            Write-Host ("{0}{1}  npm version: {2}{3}" -f $GREEN, $CHECK, $NPM_VERSION, $NC)
+        } else {
+            Write-Host ("{0}{1} npm is not installed. Please install npm (https://www.npmjs.com/){2}" -f $RED, $CROSS, $NC)
+            $MISSING = 1
+        }
+
+        if (Get-Command docker -ErrorAction SilentlyContinue) {
+            $DOCKER_VERSION = docker --version
+            Write-Host ("{0}{1}  Docker version: {2}{3}" -f $GREEN, $CHECK, $DOCKER_VERSION, $NC)
+        } else {
+            Write-Host ("{0}{1} Docker is not installed. Please install Docker Desktop (https://www.docker.com/products/docker-desktop/){2}" -f $RED, $CROSS, $NC)
+            $MISSING = 1
+        }
+
+        if ($MISSING -eq 1) {
+            Write-Host ("`n{0}{1}One or more prerequisites are missing. Please install them and re-run this script.{2}" -f $RED, $BOLD, $NC)
+            Write-Host "`nPress any key to exit..."
+            $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            return
+        } else {
+            Write-Host ("{0} All prerequisites are installed.{1}" -f $GREEN, $NC)
+        }
     } else {
-        Write-Host ("{0} All prerequisites are installed.{1}" -f $GREEN, $NC)
+        Write-Host ("{0}{1}Skipping prerequisite checks (--skip-prereqs flag set).{2}" -f $YELLOW, $BOLD, $NC)
     }
 
     # Step 0: If not running inside the repo, clone it and re-run the script from there
@@ -70,7 +83,7 @@
         Write-Host ("{0}Cloning Azure AI Travel Agents repository...{1}" -f $CYAN, $NC)
         git clone $REPO_URL
         Set-Location $REPO_DIR
-        & pwsh preview.ps1 @args
+        & pwsh preview.ps1 --skip-checks @args
         return
     }
 

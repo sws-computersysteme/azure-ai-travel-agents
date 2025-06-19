@@ -15,43 +15,58 @@ CYAN='\033[0;36m'
 BOLD='\033[1m'
 NC='\033[0m' # No Color
 
-# Step 0: Prerequisite checks
-printf "${BOLD}${BLUE}Checking prerequisites...${NC}\n"
-MISSING=0
 
-# Unicode checkmark and cross
-CHECK='\xE2\x9C\x94' # ✔
-CROSS='\xE2\x9D\x8C' # ❌
+# Parse arguments for --skip-prereqs or --skip-prerequisites
+SKIP_PREREQS=0
+for arg in "$@"; do
+  case $arg in
+    --skip-checks)
+      SKIP_PREREQS=1
+      ;;
+  esac
+done
 
-if command -v node >/dev/null 2>&1; then
-  NODE_VERSION=$(node --version)
-  printf "${GREEN}${CHECK} Node.js version: ${NODE_VERSION}${NC}\n"
+# Step 0: Prerequisite checks (unless skipped)
+if [ $SKIP_PREREQS -eq 0 ]; then
+  printf "${BOLD}${BLUE}Checking prerequisites...${NC}\n"
+  MISSING=0
+
+  # Unicode checkmark and cross
+  CHECK='\xE2\x9C\x94' # ✔
+  CROSS='\xE2\x9D\x8C' # ❌
+
+  if command -v node >/dev/null 2>&1; then
+    NODE_VERSION=$(node --version)
+    printf "${GREEN}${CHECK} Node.js version: ${NODE_VERSION}${NC}\n"
+  else
+    printf "${RED}${CROSS} Node.js is not installed. Please install Node.js (https://nodejs.org/)${NC}\n"
+    MISSING=1
+  fi
+
+  if command -v npm >/dev/null 2>&1; then
+    NPM_VERSION=$(npm --version)
+    printf "${GREEN}${CHECK} npm version: ${NPM_VERSION}${NC}\n"
+  else
+    printf "${RED}${CROSS} npm is not installed. Please install npm (https://www.npmjs.com/)${NC}\n"
+    MISSING=1
+  fi
+
+  if command -v docker >/dev/null 2>&1; then
+    DOCKER_VERSION=$(docker --version)
+    printf "${GREEN}${CHECK} Docker version: ${DOCKER_VERSION}${NC}\n"
+  else
+    printf "${RED}${CROSS} Docker is not installed. Please install Docker Desktop (https://www.docker.com/products/docker-desktop/)${NC}\n"
+    MISSING=1
+  fi
+
+  if [ $MISSING -eq 1 ]; then
+    printf "${RED}${BOLD}One or more prerequisites are missing. Please install them and re-run this script.${NC}\n"
+    exit 1
+  else
+    printf "${GREEN}All prerequisites are installed.${NC}\n"
+  fi
 else
-  printf "${RED}${CROSS} Node.js is not installed. Please install Node.js (https://nodejs.org/)${NC}\n"
-  MISSING=1
-fi
-
-if command -v npm >/dev/null 2>&1; then
-  NPM_VERSION=$(npm --version)
-  printf "${GREEN}${CHECK} npm version: ${NPM_VERSION}${NC}\n"
-else
-  printf "${RED}${CROSS} npm is not installed. Please install npm (https://www.npmjs.com/)${NC}\n"
-  MISSING=1
-fi
-
-if command -v docker >/dev/null 2>&1; then
-  DOCKER_VERSION=$(docker --version)
-  printf "${GREEN}${CHECK} Docker version: ${DOCKER_VERSION}${NC}\n"
-else
-  printf "${RED}${CROSS} Docker is not installed. Please install Docker Desktop (https://www.docker.com/products/docker-desktop/)${NC}\n"
-  MISSING=1
-fi
-
-if [ $MISSING -eq 1 ]; then
-  printf "${RED}${BOLD}One or more prerequisites are missing. Please install them and re-run this script.${NC}\n"
-  exit 1
-else
-  printf "${GREEN}All prerequisites are installed.${NC}\n"
+  printf "${YELLOW}${BOLD}Skipping prerequisite checks (--skip-prereqs flag set).${NC}\n"
 fi
 
 # Step 0: If not running inside the repo, clone it and re-run the script from there
@@ -59,10 +74,10 @@ REPO_URL="https://github.com/Azure-Samples/azure-ai-travel-agents.git"
 REPO_DIR="azure-ai-travel-agents"
 # Check for .git directory and preview.sh in the current directory
 if [ ! -d .git ] || [ ! -f preview.sh ]; then
-  printf "${CYAN}Cloning AI Travel Agents repository...${NC}\n"
+  printf "${CYAN}Cloning Azure AI Travel Agents repository...${NC}\n"
   git clone "$REPO_URL"
   cd "$REPO_DIR"
-  $SHELL preview.sh "$@"
+  $SHELL preview.sh --skip-checks "$@"
 fi
 
 # Step 1: Setup API dependencies
